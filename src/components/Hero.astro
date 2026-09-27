@@ -1,0 +1,67 @@
+---
+/** Hero (FR-03): eyebrow, h1 with the accent line, lede, two actions, HeroFrame. */
+import Button from "./Button.astro";
+import Gem from "./Gem.astro";
+import HeroFrame from "./HeroFrame.astro";
+import { hero } from "../data/site";
+
+// Keep hyphenated compounds ("digital-driven") on one line.
+const restParts = hero.rest.split(/(\S+-\S+)/).filter(Boolean);
+---
+
+<section id="about" class="hero" aria-labelledby="hero-title">
+  <div class="container grid">
+    <div class="copy">
+      <span class="hn-eyebrow"><Gem size={12} />{hero.eyebrow}</span>
+      <h1 id="hero-title" class="t-hero">
+        <span class="accent">{hero.accent}</span>{" "}
+        {restParts.map((part) => (/\S-\S/.test(part) ? <span class="nowrap">{part}</span> : part))}
+      </h1>
+      <p class="t-lede">{hero.lede}</p>
+      <div class="actions">
+        <Button href={hero.primary.href}>{hero.primary.label}</Button>
+        <Button href={hero.secondary.href} variant="ghost">{hero.secondary.label}</Button>
+      </div>
+    </div>
+    <div class="art">
+      <HeroFrame />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-8);
+  }
+  .copy {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-5);
+  }
+  h1 { color: var(--ink); text-wrap: balance; }
+  .accent { display: block; color: var(--aqua-700); }
+  .nowrap { white-space: nowrap; }
+  .t-lede { max-width: 34em; }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+  .art { width: 100%; max-width: 560px; justify-self: end; }
+
+  @media (max-width: 1020px) {
+    .grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+    .art { max-width: 520px; justify-self: center; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding-top: var(--space-7); padding-bottom: var(--space-7); }
+  }
+</style>

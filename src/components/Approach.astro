@@ -1,0 +1,37 @@
+---
+/** Our approach (FR-07): four principles on the mist ground. */
+import Gem from "./Gem.astro";
+import SectionHeading from "./SectionHeading.astro";
+import { approach } from "../data/site";
+---
+
+<section id="approach" class="section section--mist" aria-labelledby="approach-title">
+  <div class="container">
+    <SectionHeading heading={approach} id="approach-title" />
+    <ol class="grid">
+      {approach.principles.map((p) => (
+        <li class="card">
+          <Gem size={20} />
+          <h3 class="t-card-title">{p.title}</h3>
+          <p class="t-body">{p.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+  }
+  .card { display: grid; align-content: start; gap: var(--space-4); }
+  h3 { color: var(--ink); }
+  .t-body { color: var(--ink-muted); max-width: 60ch; }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

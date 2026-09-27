@@ -1,0 +1,55 @@
+---
+/** Our domain (FR-06): industries and functions as two lists of icon rows. */
+import Icon from "./Icon.astro";
+import SectionHeading from "./SectionHeading.astro";
+import { domain } from "../data/site";
+
+const lists = [
+  { title: domain.industriesTitle, rows: domain.industries, tile: "tile" },
+  { title: domain.functionsTitle, rows: domain.functions, tile: "tile tile--blush" },
+];
+---
+
+<section id="domain" class="section" aria-labelledby="domain-title">
+  <div class="container">
+    <SectionHeading heading={domain} id="domain-title" />
+    <div class="lists">
+      {lists.map((list) => (
+        <div>
+          <h3 class="t-eyebrow list-title">{list.title}</h3>
+          <ul>
+            {list.rows.map((row) => (
+              <li class="t-list-large">
+                <span class={list.tile}><Icon name={row.icon} /></span>
+                {row.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .lists {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+    margin-top: var(--space-7);
+  }
+  .list-title { color: var(--ink-muted); margin-bottom: var(--space-4); }
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+  }
+  li:first-child { border-top: 1px solid var(--line); }
+
+  @media (max-width: 860px) {
+    .lists { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+  }
+</style>

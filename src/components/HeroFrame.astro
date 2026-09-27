@@ -1,0 +1,79 @@
+---
+/**
+ * HeroFrame (FR-04): the hantii.pdf blob behind a thin browser window. Geometry is copied from
+ * the design system; keep the viewBox and shapes exactly (docs/design.md §7.6). The window
+ * holds an illustrative shortlist, never real names. Decorative.
+ */
+import { hero } from "../data/site";
+
+const rows = hero.shortlist.candidates.map((name, i) => ({
+  name,
+  y: 284 + i * 46,
+  avatar: ["av-a", "av-b", "av-c"][i % 3],
+  bar: [72, 58, 66][i % 3],
+}));
+---
+
+<svg class="hn-frame" viewBox="436 208 284 250" aria-hidden="true" focusable="false">
+  <path class="blob" d="M 634.039062 348.203125 L 674.246094 314.117188 L 675.871094 312.851562 C 699.273438 294.363281 714.417969 269.9375 709.125 250.265625 C 705.558594 237.039062 695.824219 221.09375 674.304688 219.589844 L 515.527344 216.128906 C 499.921875 215.039062 486.695312 217.140625 481.203125 230.714844 C 479.917969 233.894531 479.253906 237.292969 479.253906 240.726562 C 479.238281 260.105469 535.214844 272.3125 535.121094 294.503906 C 534.992188 326.699219 462.867188 362.847656 462.570312 400.964844 C 462.480469 412.628906 463.597656 418.386719 468.394531 426.042969 C 473.929688 434.875 493.507812 439.375 501.550781 440.222656 L 634.707031 452.128906 C 647.089844 452.996094 655.777344 447.855469 658.863281 438.597656 C 662.285156 428.335938 657.648438 420.929688 653.21875 417.65625 L 624.429688 397.441406 C 618.515625 393.269531 614.128906 390.152344 611.277344 388.097656 C 604.1875 382.304688 604.808594 374.542969 613.164062 368.707031 Z M 634.039062 348.203125 "></path>
+  <rect class="frame" x="442.34" y="237.66" width="251.8" height="185.26" rx="3.6"></rect>
+  <line class="frame-line" x1="442.34" y1="258.86" x2="694.14" y2="258.86"></line>
+  <circle class="dot-a" cx="454.63" cy="248.91" r="2.75"></circle>
+  <circle class="dot-b" cx="464.38" cy="248.91" r="2.75"></circle>
+  <circle class="dot-c" cx="474.55" cy="248.91" r="2.75"></circle>
+
+  <text class="sl-label" x="454" y="275">{hero.shortlist.label}</text>
+  {rows.map((row) => (
+    <g>
+      <rect class="sl-row" x="454" y={row.y} width="228" height="38" rx="4"></rect>
+      <circle class={row.avatar} cx="471" cy={row.y + 19} r="9"></circle>
+      <text class="sl-name" x="487" y={row.y + 17}>{row.name}</text>
+      <rect class="sl-bar" x="487" y={row.y + 22} width={row.bar} height="4" rx="2"></rect>
+      <rect class="sl-chip" x="628" y={row.y + 12} width="44" height="14" rx="7"></rect>
+      <text class="sl-chip-text" x="650" y={row.y + 21.4}>{hero.shortlist.status}</text>
+    </g>
+  ))}
+</svg>
+
+<style>
+  .hn-frame { width: 100%; height: auto; overflow: visible; }
+  .blob { fill: var(--surface-blush); }
+  .frame { fill: var(--surface); stroke: var(--ink); stroke-width: .55; }
+  .frame-line { stroke: var(--ink); stroke-width: .45; }
+  .dot-a { fill: var(--emerald-500); }
+  .dot-b { fill: var(--ink); }
+  .dot-c { fill: var(--violet-600); }
+
+  .sl-label {
+    font: 700 5.6px var(--font-label);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    fill: var(--aqua-700);
+  }
+  .sl-row { fill: var(--surface); stroke: var(--line); stroke-width: .6; }
+  .av-a { fill: var(--emerald-500); }
+  .av-b { fill: var(--violet-600); }
+  .av-c { fill: var(--surface-deep-raised); }
+  .sl-name { font: 600 7.4px var(--font-display); fill: var(--ink); }
+  .sl-bar { fill: var(--line); }
+  .sl-chip { fill: var(--surface-mist); }
+  .sl-chip-text {
+    font: 700 5.2px var(--font-label);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-anchor: middle;
+    fill: var(--emerald-800);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .blob {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: drift 14s ease-in-out infinite;
+    }
+    @keyframes drift {
+      0%, 100% { transform: rotate(-1.5deg); }
+      50% { transform: rotate(1.5deg); }
+    }
+  }
+</style>

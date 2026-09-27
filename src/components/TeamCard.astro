@@ -1,0 +1,121 @@
+---
+/**
+ * Team member card (FR-09): 4:5 portrait with name and role over a surface-deep gradient and a
+ * LinkedIn button. Without a photo it shows the placeholder state.
+ */
+import { Picture } from "astro:assets";
+import Gem from "./Gem.astro";
+import Icon from "./Icon.astro";
+import type { TeamMember } from "../data/site";
+
+interface Props {
+  member: TeamMember;
+  photoPending: string;
+}
+
+const { member, photoPending } = Astro.props;
+---
+
+<article class:list={["member", !member.photo && "member--pending"]}>
+  {member.photo ? (
+    <Picture
+      src={member.photo}
+      alt={`Portrait of ${member.name}`}
+      formats={["avif", "webp"]}
+      widths={[320, 480, 640].filter((w) => w <= member.photo!.width)}
+      width={Math.min(640, member.photo.width)}
+      sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 860px) 50vw, 360px"
+      loading="lazy"
+      class="photo"
+    />
+  ) : (
+    <div class="pending">
+      <Gem size={64} />
+      <p class="t-caption">{photoPending}</p>
+    </div>
+  )}
+  <div class:list={["caption", member.photo && "on-deep"]}>
+    <div class="who">
+      <h3 class="t-card-title name">{member.name}</h3>
+      <p class="t-eyebrow role">{member.role}</p>
+    </div>
+    {member.linkedin && (
+      <a class="linkedin" href={member.linkedin} aria-label={`${member.name} on LinkedIn`} rel="noopener">
+        <Icon name="linkedin" size={20} />
+      </a>
+    )}
+  </div>
+</article>
+
+<style>
+  .member {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface-mist);
+  }
+  .member :global(picture),
+  .member :global(.photo) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .caption {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-8) var(--space-5) var(--space-5);
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--surface-deep) 92%, transparent),
+      color-mix(in srgb, var(--surface-deep) 0%, transparent)
+    );
+  }
+  .who { display: grid; gap: var(--space-2); }
+  .name { color: var(--ink-inverse); }
+  .role { color: var(--emerald-300); }
+
+  .linkedin {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line-deep);
+    background: var(--surface-deep-raised);
+    color: var(--ink-inverse);
+    transition: border-color .2s;
+  }
+  .linkedin:hover { border-color: var(--violet-300); }
+
+  /* Placeholder state: gem on a mist-to-blush ground, name and role in ink. */
+  .member--pending {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    background: linear-gradient(160deg, var(--surface-mist), var(--surface-blush));
+    border: 1px solid var(--line);
+  }
+  .pending {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: var(--space-4);
+    color: var(--ink-muted);
+  }
+  .member--pending .caption { position: static; background: none; padding-top: 0; }
+  .member--pending .name { color: var(--ink); }
+  .member--pending .role { color: var(--aqua-700); }
+  .member--pending .linkedin {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .member--pending .linkedin:hover { border-color: var(--violet-600); }
+</style>

@@ -1,0 +1,21 @@
+---
+/**
+ * Hantii button (design system "Button"). Labels are written in sentence case in content and
+ * uppercased by CSS. One primary per section; never a ghost button on surface-deep.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"a"> & {
+  href: string;
+  variant?: "primary" | "ghost";
+  size?: "small";
+};
+
+const { href, variant = "primary", size, class: className, ...rest } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={["hn-btn", `hn-btn--${variant}`, size === "small" && "hn-btn--small", className]}
+  {...rest}
+><slot /></a>

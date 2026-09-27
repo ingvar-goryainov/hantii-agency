@@ -1,0 +1,50 @@
+---
+/** Why choose us (FR-08): sticky intro and three items, the last on surface-deep. */
+import SectionHeading from "./SectionHeading.astro";
+import { why } from "../data/site";
+---
+
+<section id="why" class="section" aria-labelledby="why-title">
+  <div class="container grid">
+    <div class="intro">
+      <SectionHeading heading={why} id="why-title" />
+    </div>
+    <ul class="items">
+      {why.items.map((item) => (
+        <li class:list={item.tone === "deep" ? "item panel-deep on-deep" : "item card"}>
+          <h3 class="t-card-title">
+            {item.title}
+            {item.emphasis && <>{" "}<span class="em">{item.emphasis}</span></>}
+          </h3>
+          <p class="t-body">{item.body}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-8);
+    align-items: start;
+  }
+  .intro {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-7));
+  }
+  .items { display: grid; gap: var(--space-5); }
+  .item { display: grid; gap: var(--space-3); padding: var(--space-6); }
+  .card h3 { color: var(--ink); }
+  .card .t-body { color: var(--ink-muted); }
+  .panel-deep { padding: var(--space-7) var(--space-6); }
+  .panel-deep h3 { color: var(--ink-inverse); font-size: 28px; line-height: 1.2; }
+  .panel-deep .em { color: var(--emerald-300); }
+  .panel-deep .t-body { color: var(--ink-inverse-muted); }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+    .intro { position: static; }
+  }
+</style>
