@@ -1,0 +1,46 @@
+---
+/** Core team (FR-09): heading, the one warm intro card, a card per member. */
+import Gem from "./Gem.astro";
+import SectionHeading from "./SectionHeading.astro";
+import TeamCard from "./TeamCard.astro";
+import { team } from "../data/site";
+---
+
+<section id="team" class="section" aria-labelledby="team-title">
+  <div class="container">
+    <SectionHeading heading={team} id="team-title" />
+    <div class="grid">
+      <div class="intro">
+        <Gem size={32} />
+        <p class="t-lede">{team.intro}</p>
+      </div>
+      {team.members.map((member) => <TeamCard member={member} photoPending={team.photoPending} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+  }
+  .intro {
+    display: grid;
+    align-content: space-between;
+    gap: var(--space-7);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--surface-blush);
+  }
+  .intro .t-lede { color: var(--ink); }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .intro { grid-column: 1 / -1; }
+  }
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

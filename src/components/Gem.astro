@@ -1,0 +1,22 @@
+---
+/** The split diamond from the Hantii mark: emerald left, violet right, small gap. Decorative. */
+interface Props {
+  /** Height in px; width follows the 24:32 ratio. */
+  size?: number;
+  class?: string;
+}
+
+const { size = 12, class: className } = Astro.props;
+const width = Math.round((size * 24) / 32);
+---
+
+<svg class:list={["gem", className]} width={width} height={size} viewBox="0 0 24 32" aria-hidden="true" focusable="false">
+  <path class="gem-left" d="M11 0 L0 16 L11 32 Z"></path>
+  <path class="gem-right" d="M13 0 L24 16 L13 32 Z"></path>
+</svg>
+
+<style>
+  .gem { flex: none; }
+  .gem-left { fill: var(--emerald-500); }
+  .gem-right { fill: var(--violet-600); }
+</style>

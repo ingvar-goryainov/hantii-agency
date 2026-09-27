@@ -1,0 +1,134 @@
+---
+/**
+ * Contacts (FR-10): dark panel with the email as selectable text and a Copy button,
+ * LinkedIn and Instagram. The logo never sits here (dark ground).
+ */
+import Button from "./Button.astro";
+import Icon from "./Icon.astro";
+import SectionHeading from "./SectionHeading.astro";
+import { contact, contacts } from "../data/site";
+---
+
+<section id="contacts" class="section" aria-labelledby="contacts-title">
+  <div class="container">
+    <div class="panel panel-deep on-deep">
+      <div class="intro">
+        <SectionHeading heading={contact} id="contacts-title" />
+        <Button href={contact.cta.href}>{contact.cta.label}</Button>
+      </div>
+
+      <ul class="rows">
+        <li class="row">
+          <span class="tile tile--deep"><Icon name="mail" /></span>
+          <span class="text">
+            <span class="t-eyebrow label">{contact.rows.email}</span>
+            <span class="value email" id="contact-email">{contacts.email}</span>
+          </span>
+          <button
+            class="copy-btn"
+            type="button"
+            data-copy={contacts.email}
+            data-target="contact-email"
+            data-done={contact.copy.done}
+            data-fallback={contact.copy.fallback}
+            aria-describedby="copy-status"
+          >
+            <Icon name="copy" size={18} class="icon-idle" />
+            <Icon name="check" size={18} class="icon-done" />
+            <span class="copy-label">{contact.copy.idle}</span>
+          </button>
+        </li>
+        <li class="row">
+          <span class="tile tile--deep"><Icon name="linkedin" /></span>
+          <span class="text">
+            <span class="t-eyebrow label">{contact.rows.linkedin}</span>
+            <a class="value" href={contacts.linkedin} rel="noopener">{contacts.linkedinLabel}</a>
+          </span>
+        </li>
+        <li class="row">
+          <span class="tile tile--deep"><Icon name="instagram" /></span>
+          <span class="text">
+            <span class="t-eyebrow label">{contact.rows.instagram}</span>
+            <a class="value" href={contacts.instagram} rel="noopener">{contacts.instagramLabel}</a>
+          </span>
+        </li>
+      </ul>
+      <p id="copy-status" class="visually-hidden" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: center;
+    padding: var(--space-8);
+  }
+  .intro { display: grid; justify-items: start; gap: var(--space-6); }
+
+  .rows { display: grid; gap: var(--space-3); }
+  .row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border: 1px solid var(--line-deep);
+    border-radius: var(--radius-md);
+    background: var(--surface-deep-raised);
+  }
+  .row a.value { border-radius: var(--radius-md); }
+  .text { display: grid; gap: var(--space-2); min-width: 0; flex: 1 1 180px; }
+  .label { color: var(--emerald-300); }
+  .value {
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 1.3;
+    color: var(--ink-inverse);
+    overflow-wrap: anywhere;
+  }
+  a.value { text-decoration: none; }
+  /* The whole row is the link's hit area (44px+ target); the ring moves to the row. */
+  a.value::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  a.value:focus-visible { outline: none; }
+  .row:has(a.value:focus-visible) { outline: 3px solid var(--violet-300); outline-offset: 3px; }
+  .row:has(a.value) { transition: border-color .2s; }
+  .row:has(a.value:hover) { border-color: var(--violet-300); }
+  a.value:hover { text-decoration: underline; text-decoration-color: var(--violet-300); text-underline-offset: 4px; }
+  .email { user-select: all; -webkit-user-select: all; }
+
+  .copy-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--line-deep);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink-inverse);
+    font: 700 12px/1 var(--font-label);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .copy-btn:hover { border-color: var(--violet-300); }
+  .copy-btn :global(.icon-done) { display: none; }
+  .copy-btn.is-done :global(.icon-idle) { display: none; }
+  .copy-btn.is-done :global(.icon-done) { display: block; color: var(--emerald-300); }
+
+  @media (max-width: 960px) {
+    .panel { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+  }
+  @media (max-width: 640px) {
+    .panel { padding: var(--space-6) var(--space-4); }
+  }
+  @media (max-width: 560px) {
+    .row { flex-wrap: wrap; }
+    .copy-btn { margin-left: calc(44px + var(--space-4)); }
+  }
+</style>

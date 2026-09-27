@@ -1,0 +1,56 @@
+/*
+ * Hantii design tokens.
+ * Mirrors the Hantii design system 1:1 (docs/design.md §4). Change the design system first,
+ * then this file. Raw colour values live here and nowhere else.
+ */
+:root {
+  /* Colour */
+  --surface: #ffffff;
+  --surface-mist: #f6f5fb;
+  --surface-blush: #ffedf2;
+  --surface-deep: #15123a;
+  --surface-deep-raised: #231d5e;
+  --ink: #232154;
+  --ink-muted: #585680;
+  --ink-inverse: #ffffff;
+  --ink-inverse-muted: #c9c6e8;
+  --line: #e4e2f0;
+  --line-deep: #3a3478;
+  --emerald-300: #6fe3bc;
+  --emerald-500: #2fa884;
+  --emerald-800: #1e5a4a;
+  --violet-300: #b48af5;
+  --violet-600: #6a1fd1;
+  --violet-800: #3e1296;
+  --aqua-400: #14d9e6;
+  --aqua-700: #0a7482;
+  --magenta-500: #d21fe0;
+  --primary: var(--violet-600);
+  --primary-hover: var(--violet-800);
+
+  /* Type families */
+  --font-display: "Geologica", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Open Sans", "Segoe UI", system-ui, sans-serif;
+  --font-label: "Montserrat", "Segoe UI", system-ui, sans-serif;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-float: 0 18px 40px -18px rgba(35, 33, 84, 0.28);
+}

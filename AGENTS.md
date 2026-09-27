@@ -12,7 +12,7 @@ Marketing site for **Hantii**, a boutique recruiting agency for FinTech, MarTech
 - [docs/design.md](docs/design.md): architecture, tokens, layout, component specs, content model, Worker, deployment, verification.
 - The upstream design system (https://claude.ai/artifact/9rnLwsg2jyT64C9VxSQhmB) is the source of truth for visual values. `docs/design.md` §4 mirrors it.
 
-**Status:** docs only, pre-scaffold. The layout and scripts below are the contract the scaffold must implement. Once it exists, keep this file in sync with it.
+**Status:** v1 built (one page + 404, Worker, icons). Keep this file in sync with the code whenever commands, layout or rules change.
 
 ## Commands
 
@@ -24,7 +24,7 @@ npm run dev          # Astro dev server, http://localhost:4321
 npm run build        # static build into dist/
 npm run check        # astro check + Worker type check
 npm test             # Worker unit tests (Vitest)
-npm run preview      # build, then serve through the Worker at http://localhost:8787
+npm run preview      # build, then serve through the Worker at http://127.0.0.1:8787
 npm run icons        # regenerate favicons and og-image (commit the output)
 npm run cf-typegen   # regenerate Worker env types after editing wrangler.jsonc
 ```
@@ -42,7 +42,7 @@ Before you call a change done, all of these must pass: `npm run check`, `npm tes
 | Section order | `src/pages/index.astro` |
 | `<head>`, SEO, JSON-LD, skip link | `src/layouts/Base.astro` |
 | Client JS (menu link close, copy email) | `src/scripts/site.ts`, the only script |
-| Redirects, security and cache headers | `worker/index.ts` + `worker/index.test.ts` |
+| Redirects, security and cache headers | `worker/policy.ts` (values) and `worker/index.ts` (handler), tested in `worker/index.test.ts` |
 | Hosting, domains | `wrangler.jsonc` |
 | Team portraits | `src/assets/team/<first>-<last>.jpg`: 4:5, eye line at 41.5%, metadata stripped (`docs/design.md` §12) |
 
@@ -61,13 +61,14 @@ These come from the Hantii design system. Breaking one means the change is wrong
 
 ## Code conventions
 
-- **Tokens only:** write colours as `var(--token)`. The only raw colour values allowed outside `tokens.css` are the design system's glow and overlay rgba values listed in `docs/design.md` §7.7 and §7.11.
+- **Tokens only:** write colours as `var(--token)`; for tints use `color-mix(in srgb, var(--token) N%, transparent)`. Raw colour values appear only in `tokens.css`, plus two places that can't read CSS variables: the `theme-color` meta in `Base.astro` and `scripts/make-icons.mjs`.
 - **No frameworks:** no CSS framework, no UI framework, no client-side islands. Keep the page zero-JS except `src/scripts/site.ts` (≤ 3 KB gzip). Prefer a platform feature (Popover API, CSS) to a script.
 - **Content stays in data:** components hold no user-facing strings except ARIA labels. They read from `src/data/site.ts`.
 - **Images:** go through `astro:assets` `<Image>` with explicit dimensions. Don't ship the source PNGs directly.
 - **Icons:** Lucide path data (ISC licence) inlined in `Icon.astro`, `stroke-width` 1.6. Don't add an icon package.
 - **Accessibility:** WCAG 2.1 AA. One `h1`, and headings never skip a level. Keep the visible 3px focus ring. Hit targets are at least 44×44px. Decorative SVGs get `aria-hidden`. All motion goes inside `prefers-reduced-motion: no-preference`.
-- **CSP:** the build must not emit inline executable `<script>`; only JSON-LD may be inline. If a change adds a third-party origin, update the CSP in `worker/index.ts` and its test in the same change.
+- **CSP:** the build must not emit inline executable `<script>`; only JSON-LD may be inline (`astro.config.mjs` stops Vite inlining JS). If a change adds a third-party origin, update the CSP in `worker/policy.ts` and its test in the same change.
+- **Worker entry:** `worker/index.ts` may only export the default handler. The Workers runtime treats every named export of the main module as an entrypoint and refuses to start, so constants and helpers go in `worker/policy.ts`.
 - **TypeScript:** strict mode. Components use PascalCase file names.
 
 ## Deployment

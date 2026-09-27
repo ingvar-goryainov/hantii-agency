@@ -1,0 +1,20 @@
+---
+import Base from "../layouts/Base.astro";
+import Button from "../components/Button.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { notFound, site } from "../data/site";
+---
+
+<Base title={`Page not found — ${site.name}`} noindex>
+  <section class="section not-found" aria-labelledby="not-found-title">
+    <div class="container">
+      <SectionHeading heading={notFound} id="not-found-title" level={1} />
+      <Button href={notFound.cta.href} class="cta">{notFound.cta.label}</Button>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .not-found { min-height: 60vh; }
+  .not-found :global(.cta) { margin-top: var(--space-6); }
+</style>

@@ -1,0 +1,74 @@
+---
+/** Footer (FR-11): mist ground, logo, navigation, social links, copyright. */
+import { Image } from "astro:assets";
+import logo from "../assets/brand/hantii-logo.png";
+import Icon from "./Icon.astro";
+import { contacts, footer, site } from "../data/site";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="top">
+      <a class="brand" href="/" aria-label="Hantii — home">
+        <Image src={logo} alt="" height={40} densities={[1, 2]} format="webp" loading="lazy" class="logo" />
+      </a>
+      <nav aria-label="Footer">
+        <ul class="links">
+          {site.nav.map((item) => <li><a class="t-nav" href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </nav>
+      <ul class="social">
+        <li><a href={contacts.linkedin} aria-label="Hantii on LinkedIn" rel="noopener"><Icon name="linkedin" size={20} /></a></li>
+        <li><a href={contacts.instagram} aria-label="Hantii on Instagram" rel="noopener"><Icon name="instagram" size={20} /></a></li>
+      </ul>
+    </div>
+    <p class="t-caption legal">{footer.copyright(year)}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--surface-mist);
+    padding-block: var(--space-8) var(--space-6);
+  }
+  .top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-5) var(--space-7);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: block; border-radius: var(--radius-sm); }
+  .logo { height: 40px; width: auto; }
+  .links { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .links a:hover { text-decoration: underline; text-decoration-color: var(--violet-600); text-underline-offset: 6px; text-decoration-thickness: 2px; }
+  .social { display: flex; gap: var(--space-2); margin-left: auto; }
+  .social a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    transition: border-color .2s;
+  }
+  .social a:hover { border-color: var(--violet-600); }
+  .legal { color: var(--ink-muted); padding-top: var(--space-5); }
+
+  @media (max-width: 860px) {
+    .social { margin-left: 0; }
+    .top { flex-direction: column; align-items: flex-start; }
+  }
+</style>

@@ -204,6 +204,6 @@ The release is accepted when all of the following hold on the production URL:
 | O1 | Team: names, roles, LinkedIn URLs, portrait photos (4:5, at least 800×1000, head-and-shoulders) | FR-09, public launch | Done 2026-09-27 (§5.2). Alona's photo arrived as 800×800 and is 640×800 after cropping, below the 800×1000 target; slightly soft on high-DPI screens. A larger original would help. |
 | O2 | Approve or edit the draft copy in §5.4 | Launch | Open |
 | O3 | Cloudflare: connect the GitHub repo in Workers & Pages; confirm `hantii.com` is in the same account and apex/www have no conflicting DNS records | FR-16, NFR-11 | Open |
-| O4 | Google Fonts are loaded from Google as the design system specifies. Self-hosting them would remove the only third-party request (better for GDPR and speed). Keep or self-host? | NFR-08 | Open — default: Google Fonts |
+| O4 | Google Fonts are loaded from Google as the design system specifies. Self-hosting them would remove the only third-party request, which matters for GDPR. With inlined CSS, Lighthouse mobile performance is already 100 using Google Fonts, so this is now a privacy decision rather than a speed one. Keep or self-host? | NFR-08 | Open — default: Google Fonts |
 | O5 | Vector (SVG) versions of the logo for sharper rendering and a smaller favicon | FR-01, FR-13 | Nice to have |
 | O6 | Privacy/legal notice page — not required while the site sets no cookies and collects no data; revisit if analytics or a form are added | Legal | Deferred |

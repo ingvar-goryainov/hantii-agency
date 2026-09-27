@@ -1,0 +1,22 @@
+---
+/** Eyebrow with gem, split-weight title (light lead, bold phrase), optional lede. */
+import Gem from "./Gem.astro";
+import type { Heading } from "../data/site";
+
+interface Props {
+  heading: Heading;
+  /** id of the title element, referenced by the section's aria-labelledby. */
+  id: string;
+  level?: 1 | 2;
+  class?: string;
+}
+
+const { heading, id, level = 2, class: className } = Astro.props;
+const Title = level === 1 ? "h1" : "h2";
+---
+
+<div class:list={["hn-heading", className]}>
+  <span class="hn-eyebrow"><Gem size={12} />{heading.eyebrow}</span>
+  <Title id={id} class="t-section-title">{heading.title.lead}{" "}<strong>{heading.title.strong}</strong></Title>
+  {heading.lede && <p class="t-lede">{heading.lede}</p>}
+</div>

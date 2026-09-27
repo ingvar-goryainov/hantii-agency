@@ -1,0 +1,134 @@
+---
+/**
+ * Sticky header (FR-01, FR-02). The mobile menu uses the Popover API, so opening, closing,
+ * Esc, light dismiss and focus return work without JavaScript; src/scripts/site.ts only
+ * closes it when a link inside is chosen.
+ */
+import { Image } from "astro:assets";
+import logo from "../assets/brand/hantii-logo.png";
+import Button from "./Button.astro";
+import Icon from "./Icon.astro";
+import { site } from "../data/site";
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href="/" aria-label="Hantii — home">
+      <Image src={logo} alt="" height={40} densities={[1, 2]} format="webp" loading="eager" class="logo" />
+    </a>
+
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {site.nav.map((item) => <li><a class="t-nav" href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <Button href={site.headerCta.href} size="small" class="cta">{site.headerCta.label}</Button>
+
+    <button class="menu-toggle" type="button" popovertarget="menu" aria-label="Menu">
+      <Icon name="menu" size={24} class="icon-open" />
+      <Icon name="x" size={24} class="icon-close" />
+    </button>
+  </div>
+
+  <div id="menu" class="menu" popover>
+    <nav aria-label="Menu">
+      <ul>
+        {site.nav.map((item) => <li><a class="t-nav" href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+    <Button href={site.headerCta.href} class="menu-cta">{site.headerCta.label}</Button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+  /* Show the hairline only once the page has scrolled, where scroll-driven animations exist. */
+  @supports (animation-timeline: scroll()) {
+    .site-header {
+      border-bottom-color: transparent;
+      animation: header-line linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 8px;
+    }
+    @keyframes header-line {
+      to { border-bottom-color: var(--line); }
+    }
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    height: var(--header-h);
+  }
+  .brand { display: block; flex: none; border-radius: var(--radius-sm); }
+  .logo { height: 40px; width: auto; }
+
+  .nav { margin-left: auto; }
+  .nav ul { display: flex; gap: var(--space-5); }
+  .nav a,
+  .menu nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+    color: var(--ink);
+    text-underline-offset: 6px;
+    text-decoration-thickness: 2px;
+  }
+  .nav a:hover,
+  .menu nav a:hover {
+    text-decoration-line: underline;
+    text-decoration-color: var(--violet-600);
+  }
+
+  .menu-toggle {
+    display: none;
+    margin-left: auto;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .menu-toggle :global(.icon-close) { display: none; }
+  .site-header:has(.menu:popover-open) .menu-toggle :global(.icon-open) { display: none; }
+  .site-header:has(.menu:popover-open) .menu-toggle :global(.icon-close) { display: block; }
+
+  .menu {
+    position: fixed;
+    inset: calc(var(--header-h) + var(--space-2)) var(--gutter) auto;
+    width: auto;
+    margin: 0;
+    padding: var(--space-4) var(--space-5) var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-float);
+  }
+  .menu ul { display: grid; margin-bottom: var(--space-4); }
+  .menu li + li { border-top: 1px solid var(--line); }
+  .menu nav a { width: 100%; min-height: 52px; font-size: 16px; }
+  .menu :global(.menu-cta) { width: 100%; }
+
+  @media (max-width: 960px) {
+    .nav,
+    .bar :global(.cta) { display: none; }
+    .menu-toggle { display: grid; }
+  }
+  @media (max-width: 640px) {
+    .logo { height: 34px; }
+  }
+</style>
