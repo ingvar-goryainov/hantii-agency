@@ -1,7 +1,8 @@
 ---
 /**
- * Team member card (FR-09): 4:5 portrait with name and role over a surface-deep gradient and a
- * LinkedIn button. Without a photo it shows the placeholder state.
+ * Team member card (FR-09, FR-19): a 4:5 portrait with the name and role either over a
+ * surface-deep gradient with a LinkedIn button (founders) or under the photo, so the photo
+ * stays whole (team). Without a photo it shows the placeholder state.
  */
 import { Picture } from "astro:assets";
 import Gem from "./Gem.astro";
@@ -11,30 +12,41 @@ import type { TeamMember } from "../data/site";
 interface Props {
   member: TeamMember;
   photoPending: string;
+  /** "overlay": name and role over the photo; "below": under it. */
+  caption?: "overlay" | "below";
+  /** `sizes` for the portrait's srcset, matching the grid the card sits in. */
+  sizes: string;
 }
 
-const { member, photoPending } = Astro.props;
+const { member, photoPending, caption = "overlay", sizes } = Astro.props;
+const { photo } = member;
+// Never upscale: small portraits get their own width as the largest candidate.
+const widths = photo
+  ? [...new Set([320, 480, 640].filter((w) => w < photo.width).concat(Math.min(640, photo.width)))]
+  : [];
 ---
 
-<article class:list={["member", !member.photo && "member--pending"]}>
-  {member.photo ? (
-    <Picture
-      src={member.photo}
-      alt={`Portrait of ${member.name}`}
-      formats={["avif", "webp"]}
-      widths={[320, 480, 640].filter((w) => w <= member.photo!.width)}
-      width={Math.min(640, member.photo.width)}
-      sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 860px) 50vw, 360px"
-      loading="lazy"
-      class="photo"
-    />
-  ) : (
-    <div class="pending">
-      <Gem size={64} />
-      <p class="t-caption">{photoPending}</p>
-    </div>
-  )}
-  <div class:list={["caption", member.photo && "on-deep"]}>
+<article class:list={["member", `member--${caption}`, !photo && "member--pending"]}>
+  <div class="frame">
+    {photo ? (
+      <Picture
+        src={photo}
+        alt={member.alt ?? `Portrait of ${member.name}`}
+        formats={["avif", "webp"]}
+        widths={widths}
+        width={Math.min(640, photo.width)}
+        sizes={sizes}
+        loading="lazy"
+        class="photo"
+      />
+    ) : (
+      <div class="pending">
+        <Gem size={64} />
+        <p class="t-caption">{photoPending}</p>
+      </div>
+    )}
+  </div>
+  <div class:list={["caption", caption === "overlay" && photo && "on-deep"]}>
     <div class="who">
       <h3 class="t-card-title name">{member.name}</h3>
       <p class="t-eyebrow role">{member.role}</p>
@@ -48,22 +60,31 @@ const { member, photoPending } = Astro.props;
 </article>
 
 <style>
-  .member {
-    position: relative;
+  .member { position: relative; }
+  .frame {
     aspect-ratio: 4 / 5;
     border-radius: var(--radius-lg);
     overflow: hidden;
+    isolation: isolate;
     background: var(--surface-mist);
   }
-  .member :global(picture),
-  .member :global(.photo) {
+  .frame :global(picture),
+  .frame :global(.photo) {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+  .frame :global(.photo) { transition: transform .5s ease; }
+  @media (prefers-reduced-motion: no-preference) {
+    .member:hover .frame :global(.photo) { transform: scale(1.04); }
+  }
 
-  .caption {
+  .who { display: grid; gap: var(--space-2); }
+
+  /* Overlay (founders): name and role over a surface-deep gradient at the bottom of the photo. */
+  .member--overlay { border-radius: var(--radius-lg); overflow: hidden; isolation: isolate; }
+  .member--overlay .caption {
     position: absolute;
     inset: auto 0 0 0;
     display: flex;
@@ -77,9 +98,8 @@ const { member, photoPending } = Astro.props;
       color-mix(in srgb, var(--surface-deep) 0%, transparent)
     );
   }
-  .who { display: grid; gap: var(--space-2); }
-  .name { color: var(--ink-inverse); }
-  .role { color: var(--emerald-300); }
+  .member--overlay .name { color: var(--ink-inverse); }
+  .member--overlay .role { color: var(--emerald-300); }
 
   .linkedin {
     flex: none;
@@ -95,10 +115,14 @@ const { member, photoPending } = Astro.props;
   }
   .linkedin:hover { border-color: var(--violet-300); }
 
+  /* Below (team): the photo stays whole; name and role sit under it. */
+  .member--below .caption { padding-top: var(--space-4); }
+  .member--below .name { font-size: 20px; color: var(--ink); }
+  .member--below .role { color: var(--aqua-700); line-height: 1.4; }
+
   /* Placeholder state: gem on a mist-to-blush ground, name and role in ink. */
-  .member--pending {
+  .member--pending .frame {
     display: grid;
-    grid-template-rows: 1fr auto;
     background: linear-gradient(160deg, var(--surface-mist), var(--surface-blush));
     border: 1px solid var(--line);
   }
@@ -109,9 +133,10 @@ const { member, photoPending } = Astro.props;
     gap: var(--space-4);
     color: var(--ink-muted);
   }
-  .member--pending .caption { position: static; background: none; padding-top: 0; }
-  .member--pending .name { color: var(--ink); }
-  .member--pending .role { color: var(--aqua-700); }
+  .member--overlay.member--pending .pending { padding-bottom: var(--space-9); }
+  .member--overlay.member--pending .caption { background: none; }
+  .member--overlay.member--pending .name { color: var(--ink); }
+  .member--overlay.member--pending .role { color: var(--aqua-700); }
   .member--pending .linkedin {
     border-color: var(--line);
     background: var(--surface);

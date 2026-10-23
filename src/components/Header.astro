@@ -4,17 +4,16 @@
  * Esc, light dismiss and focus return work without JavaScript; src/scripts/site.ts only
  * closes it when a link inside is chosen.
  */
-import { Image } from "astro:assets";
-import logo from "../assets/brand/hantii-logo.png";
 import Button from "./Button.astro";
 import Icon from "./Icon.astro";
+import Logo from "./Logo.astro";
 import { site } from "../data/site";
 ---
 
 <header class="site-header">
   <div class="container bar">
-    <a class="brand" href="/" aria-label="Hantii — home">
-      <Image src={logo} alt="" height={40} densities={[1, 2]} format="webp" loading="eager" class="logo" />
+    <a class="brand" href="/#top" aria-label="Hantii — home">
+      <Logo loading="eager" />
     </a>
 
     <nav class="nav" aria-label="Main">
@@ -69,7 +68,6 @@ import { site } from "../data/site";
     height: var(--header-h);
   }
   .brand { display: block; flex: none; border-radius: var(--radius-sm); }
-  .logo { height: 40px; width: auto; }
 
   .nav { margin-left: auto; }
   .nav ul { display: flex; gap: var(--space-5); }
@@ -127,8 +125,5 @@ import { site } from "../data/site";
     .nav,
     .bar :global(.cta) { display: none; }
     .menu-toggle { display: grid; }
-  }
-  @media (max-width: 640px) {
-    .logo { height: 34px; }
   }
 </style>

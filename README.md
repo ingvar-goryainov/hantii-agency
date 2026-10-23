@@ -30,7 +30,7 @@ To add a team member:
 
 1. Prepare a 4:5 head-and-shoulders portrait with the eye line at 41.5% from the top and metadata stripped ([docs/design.md](docs/design.md) §12).
 2. Save it as `src/assets/team/<first>-<last>.jpg`.
-3. Import it in `src/data/site.ts` and add an entry to `team.members`.
+3. Import it in `src/data/site.ts` and add an entry to `team.members` (founders) or `people.members` (Team section).
 
 Colours, type and spacing come from the Hantii design system through [`src/styles/tokens.css`](src/styles/tokens.css).
 

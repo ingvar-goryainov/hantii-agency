@@ -46,8 +46,12 @@ const lists = [
     padding-block: var(--space-4);
     border-bottom: 1px solid var(--line);
     color: var(--ink);
+    transition: color .2s;
   }
   li:first-child { border-top: 1px solid var(--line); }
+  li .tile { transition: color .2s; }
+  li:hover,
+  li:hover .tile { color: var(--violet-600); }
 
   @media (max-width: 860px) {
     .lists { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }

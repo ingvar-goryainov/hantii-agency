@@ -1,0 +1,41 @@
+---
+/**
+ * The logo as two images, mark and wordmark, so the mark can turn on its own (design system
+ * Logo rules): mark 40px and wordmark 23px tall, 6px apart; 34px and 19.5px on phones.
+ * Light grounds only. The parent link carries the accessible name.
+ */
+import { Image } from "astro:assets";
+import mark from "../assets/brand/hantii-mark.png";
+import wordmark from "../assets/brand/hantii-wordmark.png";
+
+interface Props {
+  loading?: "eager" | "lazy";
+}
+
+const { loading = "lazy" } = Astro.props;
+---
+
+<span class="logo">
+  <Image src={mark} alt="" height={40} densities={[1, 2]} format="webp" loading={loading} class="logo-mark" />
+  <Image src={wordmark} alt="" height={23} densities={[1, 2]} format="webp" loading={loading} class="logo-word" />
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 6px; }
+  .logo :global(.logo-mark) { height: 40px; width: auto; }
+  .logo :global(.logo-word) { height: 23px; width: auto; }
+
+  @media (max-width: 640px) {
+    .logo :global(.logo-mark) { height: 34px; }
+    .logo :global(.logo-word) { height: 19.5px; }
+  }
+
+  /* The mark turns once around its vertical axis every 7s, like a gem. */
+  @media (prefers-reduced-motion: no-preference) {
+    .logo :global(.logo-mark) { animation: turn 7s ease-in-out infinite; }
+    @keyframes turn {
+      0%, 82% { transform: perspective(160px) rotateY(0deg); }
+      100% { transform: perspective(160px) rotateY(360deg); }
+    }
+  }
+</style>

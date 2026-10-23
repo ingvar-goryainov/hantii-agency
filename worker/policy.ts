@@ -16,7 +16,8 @@ export const SECURITY_HEADERS: Record<string, string> = {
     "connect-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
-    "form-action 'self'",
+    // mailto: lets the contact form hand off to the visitor's email app without JavaScript.
+    "form-action 'self' mailto:",
     "frame-ancestors 'none'",
     "upgrade-insecure-requests",
   ].join("; "),
