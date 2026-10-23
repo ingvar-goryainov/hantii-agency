@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Status | v1 — implemented; kept in sync with the code |
+| Status | v1.1 — implemented; updated 2026-10-23 for the revised design system; kept in sync with the code |
 | Implements | [requirements.md](requirements.md) (FR/NFR IDs referenced below) |
 | Upstream design system | https://claude.ai/artifact/9rnLwsg2jyT64C9VxSQhmB ("Hantii": tokens, brand book, Button, SectionHeading, StatBand, HeroFrame, logos) |
 
@@ -49,21 +49,24 @@ scripts/
 public/
   favicon.ico  favicon-32.png  favicon-48.png  apple-touch-icon.png  og-image.png  robots.txt
 src/
-  assets/brand/hantii-logo.png   lockup (2409×747, transparent)
+  assets/brand/hantii-logo.png   lockup (2409×747, transparent): share image only
   assets/brand/hantii-mark.png   split diamond (770×747, transparent)
-  assets/team/                   vlada-havriushova.jpg (1200×1500), alona-zolotoverkha.jpg (640×800): 4:5, prepared per §12
+  assets/brand/hantii-wordmark.png  wordmark (1536×431, transparent)
+  assets/team/                   founders vlada-havriushova.jpg (1200×1500), alona-zolotoverkha.jpg (640×800);
+                                 team anastasiia-ivanova.jpg, inna-belova.jpg (360×450), yuliia-pavelko.jpg (480×600),
+                                 teammate.jpg (1120×1400): all 4:5, prepared per §12
   data/site.ts                   all copy and content (§8)
   styles/tokens.css              design tokens as CSS custom properties (§4)
-  styles/global.css              reset, base type, layout primitives, ported hn-* classes (§5, §7)
-  scripts/site.ts                the only client JS: menu link close + copy email (§9)
+  styles/global.css              font fallbacks (§12), reset, base type, layout primitives, motion, hn-* classes (§5, §7)
+  scripts/site.ts                the only client JS: menu link close, copy email, stat count-up, form handoff (§9)
   layouts/Base.astro             <html>, <head>, skip link, header, footer slot
-  components/                    Gem, Icon, Button, SectionHeading, Header, Hero, HeroFrame, StatBand,
-                                 Domain, Approach, WhyUs, Team, TeamCard, Contacts, Footer
+  components/                    Gem, Icon, Button, Logo, SectionHeading, Header, Hero, HeroFrame, StatBand,
+                                 About, Domain, Approach, WhyUs, Team, TeamCard, People, Contacts, Footer
   pages/index.astro              composes the sections in order (§6)
   pages/404.astro                FR-12
 ```
 
-The wordmark-only PNG from the design system is not used on the site (the brand book allows it only beside the mark; the lockup covers that).
+The page shows the mark and the wordmark as two images (§7.15) so the mark can turn; the brand book allows the wordmark only beside the mark. The lockup PNG is used only for the share image (`scripts/make-icons.mjs`).
 
 ## 3. Commands
 
@@ -94,37 +97,42 @@ Dependencies: `astro`, `@astrojs/sitemap`; dev: `@astrojs/check`, `typescript`, 
 | `surface-deep` | `#15123a` | Dark panels: StatBand, "AI can't read people", Contacts |
 | `surface-deep-raised` | `#231d5e` | Icon tiles and raised elements on `surface-deep` |
 | `ink` | `#232154` | Text on light grounds (14.8:1); HeroFrame stroke |
+| `ink-soft` | `#3b3970` | Hero points on `surface` (10.5:1) |
 | `ink-muted` | `#585680` | Ledes, secondary copy (6.1–6.9:1 on light grounds) |
 | `ink-inverse` | `#ffffff` | Text on `surface-deep` and on primary buttons |
 | `ink-inverse-muted` | `#c9c6e8` | Secondary text on `surface-deep` (10.8:1) |
+| `danger` | `#b3264f` | Required-field asterisk and form errors on `surface` (6.4:1), always with words |
 | `line` | `#e4e2f0` | Hairlines and card borders on light grounds (decorative) |
+| `line-strong` | `#7f7da3` | Form field borders on `surface` (3.9:1) |
 | `line-deep` | `#3a3478` | Hairlines and borders on `surface-deep` |
+| `emerald-100` | `#e3f7ef` | "Open to work" pill and the form's status note; text on it is `emerald-800` (7.2:1) |
 | `emerald-300` | `#6fe3bc` | Emphasis text on dark ("We can."), role labels on photos |
 | `emerald-500` | `#2fa884` | Fills, dots, avatars — never text on white |
 | `emerald-800` | `#1e5a4a` | Text on emerald tints |
+| `violet-100` | `#ece4fd` | Marker behind the hero h1's second clause (`ink` on it 12.1:1) |
 | `violet-300` | `#b48af5` | Focus ring and hover borders on `surface-deep` |
 | `violet-600` | `#6a1fd1` | The only action colour; focus ring on light grounds |
 | `violet-800` | `#3e1296` | Primary hover/pressed |
 | `aqua-400` | `#14d9e6` | Decorative fills only — fails as text |
-| `aqua-700` | `#0a7482` | Accent text: hero accent line, eyebrows, role labels (≥4.9:1) |
+| `aqua-700` | `#0a7482` | Accent text: eyebrows, role labels, the pipeline label (≥4.9:1) |
 | `magenta-500` | `#d21fe0` | Decorative fills only, sparingly |
 | `primary` | `var(--violet-600)` | Primary buttons, action links |
 | `primary-hover` | `var(--violet-800)` | Primary hover/pressed |
 
 ### 4.2 Type
 
-Families: `--font-display: "Geologica", "Segoe UI", system-ui, sans-serif` · `--font-body: "Open Sans", "Segoe UI", system-ui, sans-serif` · `--font-label: "Montserrat", "Segoe UI", system-ui, sans-serif`.
+Families: `--font-display: "Geologica", "Geologica Fallback", "Segoe UI", system-ui, sans-serif` · `--font-body: "Open Sans", "Open Sans Fallback", "Segoe UI", system-ui, sans-serif` · `--font-label: "Montserrat", "Montserrat Fallback", "Segoe UI", system-ui, sans-serif`. The `… Fallback` faces are a site addition (§12), not design-system tokens.
 Loaded from Google Fonts (`display=swap`): Geologica 300/400/600/700, Open Sans 400/600/700, Montserrat 600/700.
 
 Each style is a utility class `.t-<name>`. Sizes marked → scale fluidly with `clamp()` between the phone and desktop values.
 
 | Style | Family | Size / line-height | Weight | Tracking | Use |
 | --- | --- | --- | --- | --- | --- |
-| `hero` | display | 54px → 36px / 1.08 | 700 | -0.02em | Hero h1 only |
+| `hero` | display | 52px → 36px / 1.06 | 700 | -0.025em | Hero h1 only, all `ink`; second clause on a `violet-100` marker |
 | `section-title` | display | 48px → 32px / 1.1 | 300 (+`<strong>` 700) | -0.015em | Section h2, key phrase bold at the end |
 | `stat` | display | 64px → 48px / 1 | 300 | -0.02em | StatBand figures, `tabular-nums` |
 | `list-large` | display | 28px → 22px / 1.2 | 400 | -0.01em | Domain rows |
-| `card-title` | display | 22px / 1.25 | 600 | -0.01em | Principle, why-us and member titles |
+| `card-title` | display | 22px / 1.25 | 600 | -0.01em | Principle, why-us and founder titles; 20px on Team cards |
 | `lede` | body | 18px / 1.6 | 400 | — | Intro paragraph, `ink-muted` |
 | `body` | body | 16px / 1.65 | 400 | — | Running text, ~60ch measure |
 | `caption` | body | 14px / 1.45 | 400 | — | Stat labels, fine print |
@@ -143,48 +151,53 @@ The 48px phone `stat` and 22px phone `list-large` are site decisions (the design
 | `space-3` | 12px | Button groups, list gaps |
 | `space-4` | 16px | Phone gutter; heading-to-lede gap |
 | `space-5` | 24px | Card grid gaps; desktop gutter |
-| `space-6` | 32px | Card padding; StatBand overlap |
+| `space-6` | 32px | Card padding; StatBand overlap; hero top padding |
 | `space-7` | 48px | Heading block to content |
 | `space-8` | 64px | Column gaps in two-column sections |
-| `space-9` | 96px | Section padding on phones |
-| `space-10` | 128px | Section padding on desktop |
+| `space-9` | 96px | Hero bottom padding |
+| `space-10` | 128px | Reserved; sections no longer use it |
+| `section-gap` | 96px | Space above every section and inside the mist and end bands; 72px on phones |
 | `radius-sm` | 6px | Buttons |
 | `radius-md` | 12px | Icon tiles, contact rows |
 | `radius-lg` | 24px | Panels, cards, portraits |
 | `radius-pill` | 999px | Chips, status tags |
-| `shadow-float` | `0 18px 40px -18px rgba(35, 33, 84, 0.28)` | Open mobile menu only |
+| `shadow-float` | `0 18px 40px -18px rgba(35, 33, 84, 0.28)` | Open mobile menu; card hover |
 
 ## 5. Layout system
 
 - **Container** `.container`: `max-width: 1160px` content + `padding-inline: var(--space-5)` (`--space-4` ≤ 640px), centred.
-- **Section rhythm** `.section`: `padding-block: var(--space-10)` (`--space-9` ≤ 640px). Heading block to content: `--space-7`.
-- **Grounds**, top to bottom: header `surface` · hero `surface` (blob `surface-blush`) · StatBand `surface-deep` panel · Domain `surface` · Approach `surface-mist` · Why us `surface` (third item `surface-deep`) · Team `surface` (intro card `surface-blush`) · Contacts `surface-deep` panel on `surface` · footer `surface-mist`.
+- **Section rhythm** `.section`: `padding-top: var(--section-gap)` (72px ≤ 640px). `.section--mist` (Approach) and `.section--end` (Contacts, 404) also pad the bottom. Heading block to content: `--space-7`.
+- **Grounds**, top to bottom: header `surface` · hero `surface` (blob `surface-blush`) · StatBand `surface-deep` panel · About `surface` (chips `surface-mist`) · Domain `surface` · Approach `surface-mist` · Why us `surface` (third item `surface-deep`) · Core team `surface` (warm card `surface-blush`) · Team `surface` · Contacts `surface-deep` panel with a `surface` form card · footer `surface-mist`.
 - **Sticky header** height 72px (64px ≤ 960px). `html { scroll-padding-top: calc(header + var(--space-4)) }` so anchors land below it (FR-17).
 - **Z-index**: header 50; the menu popover sits in the top layer.
 
 | Breakpoint (max-width) | Change |
 | --- | --- |
 | 1020px | Hero stacks: copy above HeroFrame (HeroFrame max 520px wide, centred) |
-| 960px | Header navigation collapses behind the menu button |
-| 860px | StatBand 2×2; Domain lists and Why-us stack to one column (intro no longer sticky); team grid 2 columns |
-| 640px | Phone: gutter 16px, section padding 96px, logo 34px, fluid type at minimum |
-| 560px | Team grid 1 column; Contacts rows stack label above value |
+| 960px | Header navigation collapses behind the menu button; Team grid 4 → 2 columns; Contacts panel stacks (form under the rows) |
+| 860px | StatBand 2×2; Domain lists and Why-us stack to one column (intro no longer sticky); Core team grid 2 columns (warm card full width below); footer 2 columns (logo row above) |
+| 640px | Phone: gutter 16px, section gap 72px, mark 34px and wordmark 19.5px, fluid type at minimum |
+| 560px | Core team grid 1 column (Team stays 2); Contacts: Copy wraps under the email |
+| 400px | Footer 1 column |
+| HeroFrame window < 360px (container query) | Pipeline rows stack the pill under the role; Role/Status header hidden |
 
 ## 6. Page composition (`src/pages/index.astro`)
 
 | Order | Component | Anchor | Nav label | Requirement |
 | --- | --- | --- | --- | --- |
 | — | `Header` (in `Base.astro`) | — | — | FR-01, FR-02 |
-| 1 | `Hero` + `HeroFrame` | `#about` | About | FR-03, FR-04 |
+| 1 | `Hero` + `HeroFrame` | (`/#top`) | — | FR-03, FR-04 |
 | 2 | `StatBand` | — | — | FR-05 |
-| 3 | `Domain` | `#domain` | Domain | FR-06 |
-| 4 | `Approach` | `#approach` | Approach | FR-07 |
-| 5 | `WhyUs` | `#why` | Why us | FR-08 |
-| 6 | `Team` + `TeamCard` | `#team` | Team | FR-09 |
-| 7 | `Contacts` | `#contacts` | Contacts | FR-10 |
+| 3 | `About` | `#about` | About | FR-18 |
+| 4 | `Domain` | `#domain` | Domain | FR-06 |
+| 5 | `Approach` | `#approach` | Approach | FR-07 |
+| 6 | `WhyUs` | `#why` | Why us | FR-08 |
+| 7 | `Team` + `TeamCard` | `#team` | Team | FR-09 |
+| 8 | `People` + `TeamCard` | `#people` | (footer only) | FR-19 |
+| 9 | `Contacts` | `#contacts` | Contacts | FR-10, FR-20 |
 | — | `Footer` (in `Base.astro`) | — | — | FR-11 |
 
-Landmarks: `<header>`, `<nav aria-label="Main">`, `<main id="main">` (skip-link target), one `<section aria-labelledby>` per block, `<footer>`. Exactly one `h1` (hero); every section title is an `h2`; card titles are `h3`.
+Landmarks: `<header>`, `<nav aria-label="Main">`, `<main id="main">` (skip-link target), one `<section aria-labelledby>` per block, `<footer>`. Exactly one `h1` (hero); every section title is an `h2`; card titles and the form title are `h3`; the footer's column titles are `h2` (they follow `main`, so levels never skip). The header and footer logos link to `/#top`.
 
 ## 7. Components
 
@@ -200,14 +213,13 @@ Line icons, `stroke: currentColor`, `stroke-width: 1.6`, `fill: none`, 24×24 vi
 | --- | --- | --- |
 | Web3 & Crypto | `blocks` | `surface-mist` |
 | FinTech | `landmark` | `surface-mist` |
-| MarTech | `radar` | `surface-mist` |
 | iGaming | `dices` | `surface-mist` |
 | AI & Deep Tech | `cpu` | `surface-mist` |
 | Product | `layout-panel-top` | `surface-blush` |
 | Growth | `trending-up` | `surface-blush` |
-| Marketing | `megaphone` | `surface-blush` |
 | Engineering & Tech | `code-xml` | `surface-blush` |
 | LinkedIn / Instagram / Email / Copy / Copied / Menu / Close | `linkedin` / `instagram` / `mail` / `copy` / `check` / `menu` / `x` | context |
+| Button arrow (HIRE TOP TALENT, START A SEARCH) | `arrow-right`, 16px | none |
 
 ### 7.3 Button
 `<a>` or `<button>` with classes from the design system:
@@ -218,25 +230,28 @@ Line icons, `stroke: currentColor`, `stroke-width: 1.6`, `fill: none`, 24×24 vi
   padding:16px 24px; border-radius:var(--radius-sm); text-decoration:none; border:1.5px solid transparent;
   cursor:pointer; white-space:nowrap; transition:background-color .2s, color .2s, transform .2s; }
 .hn-btn--primary { background:var(--primary); color:var(--ink-inverse); }
-.hn-btn--primary:hover { background:var(--primary-hover); transform:translateY(-1px); }
+.hn-btn--primary:hover { background:var(--primary-hover); }
 .hn-btn--ghost { background:transparent; color:var(--ink); border-color:var(--ink); }
 .hn-btn--ghost:hover { background:var(--ink); color:var(--ink-inverse); }
 .hn-btn--small { padding:12px 18px; font-size:12px; }
 .hn-btn:focus-visible { outline:3px solid var(--violet-600); outline-offset:3px; }
+/* motion, inside prefers-reduced-motion: no-preference */
+.hn-btn:hover { transform:translateY(-2px); }
+.hn-btn:hover .hn-btn-arrow { transform:translateX(3px); }
 ```
 
-Props: `href?`, `variant: "primary" | "ghost"`, `size?: "small"`. Rules: one primary per section; ghost never on `surface-deep`; labels are uppercase verbs written in sentence case in content and uppercased by CSS. `.hn-btn--small` minimum hit area is kept at 44px by the header row height.
+Props: `href?` (renders `<a>`; without it a `<button>` with `type?: "button" | "submit"`), `variant: "primary" | "ghost"`, `size?: "small"`, `arrow?: boolean` (trailing `arrow-right` icon, aria-hidden). Rules: one primary per section; ghost never on `surface-deep`; labels are uppercase verbs written in sentence case in content and uppercased by CSS. `.hn-btn--small` minimum hit area is kept at 44px by the header row height.
 
 ### 7.4 SectionHeading
-Eyebrow (Gem + label) → `h2.t-section-title` with one `<strong>` phrase at the end → optional lede. Classes `hn-heading` (grid, gap `space-4`, max-width 720px), `hn-eyebrow` (`aqua-700` on light, `emerald-300` on `surface-deep` via a `tone="deep"` prop). Props: `heading` (`{ eyebrow, title: { lead, strong }, lede? }`), `id` (for `aria-labelledby`), `level?: 1 | 2` (the 404 page uses 1). On `surface-deep` the colours switch via the `.on-deep` ancestor class, not a prop. The space between `lead` and `strong` is written as `{" "}`: Astro's HTML compression otherwise drops it.
+Eyebrow (Gem + label) → `h2.t-section-title` with one `<strong>` phrase at the end → optional lede. Classes `hn-heading` (grid, gap `space-4`, max-width 720px), `hn-eyebrow` (`aqua-700` on light, `emerald-300` on `surface-deep` via a `tone="deep"` prop). Props: `heading` (`{ eyebrow, title: { lead, strong }, lede? }`), `id` (for `aria-labelledby`), `level?: 1 | 2` (the 404 page uses 1). On `surface-deep` the colours switch via the `.on-deep` ancestor class, not a prop. The space between `lead` and `strong` is written as `{" "}`: Astro's HTML compression otherwise drops it. Hyphenated compounds in the title ("digital-driven") are wrapped in `.nowrap` so they never break at the hyphen.
 
 ### 7.5 Header
-Sticky, `surface` background with a `line` bottom border once scrolled past 8px (CSS scroll-driven animation where supported, otherwise always on — no JS). Row: logo (`<Image>` 40/34px tall, `alt="Hantii — home"`) · nav links (`t-nav`, `ink`, hover underline 2px `violet-600`) · CONTACT US small primary.
+Sticky, `surface` background with a `line` bottom border once scrolled past 8px (CSS scroll-driven animation where supported, otherwise always on — no JS). Row: `Logo` (§7.15) in a link to `/#top` with `aria-label="Hantii — home"` · nav links (`t-nav`, `ink`, hover underline 2px `violet-600`) · CONTACT US small primary.
 
 Mobile (≤ 960px): nav links hidden; a menu `<button popovertarget="menu">` (44×44, `menu` icon, `aria-label="Menu"`) opens `<div id="menu" popover>`: fixed panel under the header, `inset-inline: var(--space-4)`, `surface`, `radius-lg`, `line` border, `shadow-float`, links stacked at 44px min height, CONTACT US full width. The Popover API gives Esc, light dismiss, top-layer stacking and focus return without JavaScript; `site.ts` only closes the popover when a link inside it is clicked (FR-02).
 
 ### 7.6 Hero and HeroFrame
-Two columns (copy 6/12, frame 6/12, gap `space-8`), stacking at 1020px. Copy: SectionHeading-style eyebrow "About us" → `h1.t-hero` with `<span class="accent">Boutique recruiting</span><br>` in `aqua-700` then the rest in `ink` → `p.t-lede` → button row (gap `space-3`). Bottom padding leaves room for the StatBand overlap.
+Two columns (copy 7/12, frame 5/12, gap `space-8`), stacking at 1020px. Padding: top `space-6` (`space-5` on phones), bottom `space-9` for the StatBand overlap. Copy: eyebrow (Gem + "Boutique recruiting agency") → `h1.t-hero` all `ink`: the first clause in a block span, the second in `.marker` (a `violet-100` `linear-gradient` background, 86% tall, `box-decoration-break: clone`) → `ul.points`, three items in `ink-soft` 18/1.6 with a 14px Gem bullet → button row (gap `space-3`): primary with arrow, ghost. The headline and points sit above the fold at 1366×768 and 390×844 (measured: points end at 501px and 577px).
 
 HeroFrame — keep this geometry exactly (viewBox `436 208 284 250`):
 
@@ -248,7 +263,6 @@ HeroFrame — keep this geometry exactly (viewBox `436 208 284 250`):
   <circle class="dot-a" cx="454.63" cy="248.91" r="2.75"/>
   <circle class="dot-b" cx="464.38" cy="248.91" r="2.75"/>
   <circle class="dot-c" cx="474.55" cy="248.91" r="2.75"/>
-  <!-- window content goes here: x 442–694, y 259–423 -->
 </svg>
 ```
 
@@ -259,9 +273,15 @@ HeroFrame — keep this geometry exactly (viewBox `436 208 284 250`):
 .hn-frame .dot-a { fill:var(--emerald-500); } .hn-frame .dot-b { fill:var(--ink); } .hn-frame .dot-c { fill:var(--violet-600); }
 ```
 
-Window content: a small "Shortlist" label, then three rows (~44 units tall, 12-unit inset) — avatar circle (`emerald-500`, `violet-600`, `surface-deep-raised` fills), "Candidate 01/02/03" in `font-display` 7.5 units `ink`, a `line`-coloured role bar, and a `radius-pill` chip in `surface-mist` on the right. Illustrative only (§5.3 of requirements).
+Markup: `<figure>` → `.stage` (relative) holding the SVG above and `.window`, an HTML layer absolutely positioned over the window's content area (x 442.34–694.14, y 258.86–422.92 of the viewBox: `left 2.2324%`, `top 20.344%`, `width 88.662%`, `height 65.624%`, `overflow: hidden`, `container-type: inline-size`) → `figcaption` (`t-caption ink-muted`, centred). The SVG stays `aria-hidden`; the list and caption are read.
 
-Motion: the blob rotates ±1.5° over 14s, `ease-in-out`, infinite, `transform-box: fill-box; transform-origin: center`, inside `@media (prefers-reduced-motion: no-preference)` only.
+Window content (`.window-inner`, padding `3.6cqi 4.4cqi`; every size in `cqi` of the window, capped at the design values, so it scales with the drawing and always fits):
+- `p#pipeline-label` "Talent pipeline": Montserrat 700, `min(12px, 3cqi)`, 0.14em, uppercase, `aqua-700`.
+- A Role / Status header row (`aria-hidden`), Montserrat 700 `min(11px, 2.7cqi)`, `ink-muted`.
+- `ul[aria-labelledby=pipeline-label]`, rows split by `line` hairlines: role (Geologica 600, `min(16px, 3.9cqi)`, `ink`) and, on the right, a pill: `emerald-100` ground, `emerald-800` text, `radius-pill`, with a 0.6em `emerald-500` dot.
+- Window narrower than 360px (`@container`): the header row hides and each row stacks the pill under the role (role `4.3cqi`, pill `3.4cqi`).
+
+Motion (inside `prefers-reduced-motion: no-preference`): the blob rotates ±2° over 14s, `ease-in-out`, infinite, `transform-box: fill-box; transform-origin: center`; the rows slide in once from `translateX(-12px)` (transform only, so they are never hidden), staggered 0.12s; the dots pulse with a fading `box-shadow` ring every 2.8s.
 
 ### 7.7 StatBand
 
@@ -277,37 +297,61 @@ Motion: the blob rotates ±1.5° over 14s, `ease-in-out`, infinite, `transform-b
 .hn-stat span { font-size:14px; line-height:1.45; color:var(--ink-inverse-muted); }
 ```
 
-Placed in the container with `margin-top: calc(-1 * var(--space-6))` so it overlaps the hero bottom. Markup is a `<dl>` (figure = `dd`, label = `dt`, visually reordered) under a visually hidden `h2` "By the numbers". ≤ 860px: 2×2 grid, dividers only between columns, row gap `space-6`. The glows are the design system's `rgba(106,31,209,.35)` and `rgba(47,168,132,.22)`, written as `color-mix()` of the tokens so no colour literal leaves `tokens.css`. The panel background is the shared `.panel-deep` class, also used by the Why-us highlight and Contacts.
+Placed in the container with `margin-top: calc(-1 * var(--space-6))` so it overlaps the hero bottom. Markup is a `<dl>` (figure = `dd`, label = `dt`, visually reordered) under a visually hidden `h2` "By the numbers". Each `dd` holds the figure twice: an `aria-hidden` `span[data-count]` that `site.ts` counts up (§9) and a visually hidden copy for screen readers, so they never hear the in-between numbers. ≤ 860px: 2×2 grid, dividers only between columns, row gap `space-6`. The glows are the design system's `rgba(106,31,209,.35)` and `rgba(47,168,132,.22)`, written as `color-mix()` of the tokens so no colour literal leaves `tokens.css`. The panel background is the shared `.panel-deep` class, also used by the Why-us highlight and Contacts.
 
 ### 7.8 Domain
-SectionHeading, then two columns (gap `space-8`), each an `h3` eyebrow-styled list title (Industries / Functions) over a `<ul>` of rows: 44px icon tile + label in `t-list-large`, rows separated by `line` hairlines, padding-block `space-4`. No links, no hover state.
+SectionHeading, then two columns (gap `space-8`), each an `h3` eyebrow-styled list title (Industries / Functions) over a `<ul>` of rows: 44px icon tile + label in `t-list-large`, rows separated by `line` hairlines, padding-block `space-4`. No links; on hover the row's text and icon turn `violet-600`.
 
 ### 7.9 Approach
-`surface-mist` section. SectionHeading, then a 2×2 grid (1 column ≤ 860px, gap `space-5`) of cards: `surface`, 1px `line` border, `radius-lg`, padding `space-6`; Gem marker (20px) → `h3.t-card-title` → `p.t-body ink-muted`. Flat — no shadow.
+`surface-mist` section. SectionHeading, then a 2×2 grid (1 column ≤ 860px, gap `space-5`) of cards: `surface`, 1px `line` border, `radius-lg`, padding `space-6`; Gem marker (20px) → `h3.t-card-title` → `p.t-body ink-muted`. Flat at rest; on hover `shadow-float` and, with motion allowed, a 3px lift (the shared `.card` rule).
 
 ### 7.10 WhyUs
-Two columns 5/7. Left: SectionHeading with `position: sticky; top: calc(header + var(--space-7))`. Right: three stacked cards (gap `space-5`) — the first two as Approach cards on `surface`; the third on `surface-deep` with the two corner glows of §7.7, `line-deep` border, title "AI can't read people." in `ink-inverse` with "We can." in `emerald-300`, body `ink-inverse-muted`. ≤ 860px: one column, heading not sticky.
+Two columns 5/7. Left: SectionHeading and the START A SEARCH primary (with arrow, gap `space-6`) with `position: sticky; top: calc(header + var(--space-7))`. Right: three stacked cards (gap `space-5`) — the first two as Approach cards on `surface`; the third on `surface-deep` with the two corner glows of §7.7, `line-deep` border, title "AI can't read people." in `ink-inverse` with "We can." in `emerald-300`, body `ink-inverse-muted`. ≤ 860px: one column, heading not sticky.
 
-### 7.11 Team and TeamCard
-SectionHeading, then a grid (3 columns, 2 ≤ 860px, 1 ≤ 560px, gap `space-5`). First cell: the warm intro card (`surface-blush`, `radius-lg`, padding `space-6`): a 32px Gem at the top and the intro in `t-lede ink` at the bottom. At ≤ 860px it spans the full row above the two portraits. Then one TeamCard per member.
+### 7.11 Team, People and TeamCard
+**Core team** (`Team.astro`, `#team`): SectionHeading, then a grid (3 columns, 2 ≤ 860px, 1 ≤ 560px, gap `space-5`): a TeamCard per founder, then the warm card (`surface-blush`, `radius-lg`, padding `space-6`, the page's one blush card): a 32px Gem at the top, "A **boutique** team for…" in Geologica 300 26/1.25 `ink` with the strong word 700, the body in `t-body ink-muted`, and the TALK TO US primary at the bottom. At ≤ 860px the warm card spans the full row under the portraits.
 
-TeamCard: `<article>` with a 4:5 frame, `radius-lg`, `overflow: hidden`.
-- With photo: `<Image>` `object-fit: cover`. Portraits are pre-cropped to 4:5 with the eye line at 41.5% from the top (§12), so faces align across cards and `object-position` stays centred; widths 320/480/640, `sizes="(max-width: 560px) 100vw, (max-width: 860px) 50vw, 360px"`, lazy.
-- Overlay at the bottom: `linear-gradient(to top, color-mix(in srgb, var(--surface-deep) 92%, transparent), transparent)`, padding `space-5`; `h3.t-card-title ink-inverse` name, `p.t-eyebrow emerald-300` role; LinkedIn icon button (44×44, `surface-deep-raised`, `radius-md`, focus ring `violet-300`, `aria-label="<name> on LinkedIn"`) at the right.
-- Placeholder (no photo): background `linear-gradient(160deg, var(--surface-mist), var(--surface-blush))`, centred 64px Gem, caption "Photo coming soon" (`t-caption ink-muted`); name/role in `ink`/`aqua-700` below the gem instead of over a gradient; no LinkedIn button when `linkedin` is null.
+**Team** (`People.astro`, `#people`): SectionHeading, then a grid of TeamCards with `caption="below"`: 4 columns, 2 ≤ 960px (also on phones, gap `space-6` × `space-4`).
+
+**TeamCard**: `<article>` with a 4:5 `.frame` (`radius-lg`, `overflow: hidden`).
+- With photo: `<Picture>` AVIF/WebP, `object-fit: cover`. Portraits are pre-cropped to 4:5 with the eye line at 41.5% from the top (§12), so faces align across cards and `object-position` stays centred. Widths 320/480/640, never above the source width (a smaller source adds its own width instead). `sizes` comes from the grid: founders `(max-width: 560px) calc(100vw - 32px), (max-width: 860px) 50vw, 360px`; team `(max-width: 960px) calc(50vw - 28px), 272px`. Lazy. Alt is "Portrait of {name}" unless the member has an `alt` (TeamMate). With motion allowed, the photo zooms to 1.04 on card hover.
+- `caption="overlay"` (founders): the caption sits at the bottom of the photo over `linear-gradient(to top, color-mix(in srgb, var(--surface-deep) 92%, transparent), transparent)`, padding `space-5`: `h3.t-card-title ink-inverse` name, `p.t-eyebrow emerald-300` role; LinkedIn icon button (44×44, `surface-deep-raised`, `radius-md`, focus ring `violet-300`, `aria-label="<name> on LinkedIn"`) at the right.
+- `caption="below"` (team): the photo stays whole; under it, padding-top `space-4`, the name (`card-title` at 20px, `ink`) and role (`t-eyebrow aqua-700`).
+- Placeholder (no photo): the frame gets `linear-gradient(160deg, var(--surface-mist), var(--surface-blush))` and a `line` border, a centred 64px Gem and the caption "Photo coming soon" (`t-caption ink-muted`); an overlay caption switches to `ink`/`aqua-700` with no gradient; no LinkedIn button when `linkedin` is null.
 
 ### 7.12 Contacts
-Container-width panel on `surface-deep` with the two corner glows, `radius-lg`, padding `space-8` (`space-6` ≤ 640px). Two columns: left SectionHeading (`tone="deep"`: title `ink-inverse`, strong in `emerald-300`, lede `ink-inverse-muted`) + START A SEARCH primary (`mailto:team@hantii.com?subject=New%20search`); right a list of three rows, each `surface-deep-raised`, `line-deep` border, `radius-md`, padding `space-4`:
+Container-width panel on `surface-deep` with the two corner glows, `radius-lg`, padding `space-8` (`space-6` × `space-4` ≤ 640px), in a `.section--end` section. Two columns (one ≤ 960px), aligned to the top. Left: SectionHeading (on `.on-deep`: title `ink-inverse`, strong in `emerald-300`, lede `ink-inverse-muted`), then a list of three rows, each `surface-deep-raised`, `line-deep` border, `radius-md`, padding `space-4`:
 - Email: `mail` icon · label "Email" · `<span class="email" id="contact-email">team@hantii.com</span>` (`user-select: all`) · Copy button (`copy` icon + "Copy", 44px tall, `aria-describedby` a visually hidden `aria-live="polite"` status).
 - LinkedIn: icon · "LinkedIn" · link text "hantii-agency" → company URL, `rel="noopener"`, opens in the same tab.
 - Instagram: icon · "Instagram" · "@hantii.agency" → profile URL.
-The LinkedIn and Instagram links stretch over their whole row (`::after` overlay) so the target is the row's full ~78px height; their focus ring moves to the row via `.row:has(a:focus-visible)`. On phones the text keeps at least 180px (`flex: 1 1 180px`), so the Copy button wraps under the email instead of squeezing it. The logo is never placed in this panel (dark ground).
+The LinkedIn and Instagram links stretch over their whole row (`::after` overlay) so the target is the row's full ~78px height; their focus ring moves to the row via `.row:has(a:focus-visible)`. On phones the text keeps at least 180px (`flex: 1 1 180px`), so the Copy button wraps under the email instead of squeezing it. Right: the contact form card (§7.17). The logo is never placed in this panel (dark ground).
 
 ### 7.13 Footer
-`surface-mist`, padding-block `space-8`. Row 1: logo 40px · nav links · LinkedIn/Instagram icon links. Row 2 separated by a `line` hairline: "© {current year} Hantii Agency" (`t-caption ink-muted`), year computed at build time.
+`surface-mist`, padding-block `space-8` `space-6`. Top grid, 2fr/1fr/1fr (2 columns ≤ 860px with the first spanning, 1 column ≤ 400px), `line` hairline below: `Logo` linking to `/#top` and the one-line blurb (`t-caption ink-muted`) · `nav` "Agency" (About us, Our domain, Our approach, Core team, Team) · "Contacts" (team@hantii.com → `/#contacts`, LinkedIn, Instagram). Column titles are `h2.t-eyebrow aqua-700`; links are 15px `ink`, 44px tall, `violet-600` with an underline on hover. Bottom row (`t-caption ink-muted`, space-between, wraps): "© {year} Hantii Agency. All rights reserved." (year at build time) and "Recruiting for FinTech · Web3 · iGaming · AI".
 
 ### 7.14 Base layout
 `<html lang="en">`; `<head>`: charset, viewport, title, description, canonical, `theme-color #ffffff`, OG/Twitter tags (§11), icons, preconnect to `fonts.googleapis.com` and `fonts.gstatic.com` (crossorigin), Google Fonts stylesheet, JSON-LD, `<noscript><style>` for the no-JS rules (§9). `<body>`: skip link "Skip to content" (visible on focus) → Header → `<main id="main">` slot → Footer. Global focus style: `:focus-visible { outline: 3px solid var(--violet-600); outline-offset: 3px }`, `violet-300` inside `.on-deep`.
+
+### 7.15 Logo
+`Logo.astro`: the mark and the wordmark as two `<Image>`s (WebP, 1x/2x, `alt=""`, the parent link carries the name), `inline-flex`, 6px apart. Mark 40px and wordmark 23px tall; 34px and 19.5px ≤ 640px. With motion allowed, the mark turns once around its vertical axis every 7s (`perspective(160px) rotateY(0 → 360deg)` over the last 18% of a 7s loop); the wordmark stays still. Light grounds only. Prop `loading` (`eager` in the header).
+
+### 7.16 About
+`About.astro`, `#about`, right after the StatBand: SectionHeading ("About us", split-weight title, lede), then the industries from `domain.industries` as chips: `ul` flex-wrap, gap `space-2`, margin-top `space-6`; each chip `surface-mist`, `line` border, `radius-pill`, padding 10px `space-4`, Montserrat 600 14px `ink`.
+
+### 7.17 Contact form
+A `surface` card (`radius-lg`, padding `space-6`; `space-5` × `space-4` on phones) inside the Contacts panel, so focus rings inside it switch back to `violet-600`. `<form action="mailto:team@hantii.com" method="post" enctype="text/plain" data-mail-form>` with `data-to`, `data-subject`, `data-reply-to`:
+- `h3.t-card-title` "Send us a message" and the lede (`ink-muted`).
+- Email: `label` (Open Sans 600 14px) with a `danger` asterisk (`aria-hidden`) → `input type=email required autocomplete=email` → `p.error` (`danger`, 14px, `hidden`).
+- Message (optional): `textarea`, 128px min height, vertical resize.
+- Fields: 48px min height, padding 12px 14px, 1.5px `line-strong` border, `radius-sm`, 16px text (no iOS zoom). Focus: `violet-600` border and a 3px `violet-600` 22% ring. Invalid: `danger` border.
+- "* Required" note (14px `ink-muted`, `danger` asterisk), then SEND MESSAGE (`Button type=submit`, the panel's only primary) and `p.handoff[role=status]`, shown only when it has text: `emerald-100` ground, `emerald-800` text, `radius-md`.
+Behaviour is in §9. Without JS the browser validates the email and posts the form to `mailto:` (CSP `form-action 'self' mailto:`, §10.3).
+
+### 7.18 Motion
+All of it sits inside `prefers-reduced-motion: no-preference`; with reduced motion nothing moves and the count-up doesn't run.
+- Sections: `.section > .container` rises 26px and fades in over `entry 0%–40%` of a `view()` timeline, inside `@supports (animation-timeline: view())`. Browsers without scroll-driven animations show the content as is; nothing starts hidden.
+- Hero: the marker draws in once (background-size 0 → 100%, 0.9s after 0.3s); HeroFrame per §7.6; the mark per §7.15; stats per §9.
+- Hover: buttons lift 2px (arrow nudges 3px); `.card` lifts 3px with `shadow-float`; team photos zoom 4%; Domain rows and icons turn `violet-600` (colour only, also under reduced motion).
 
 ## 8. Content model (`src/data/site.ts`)
 
@@ -316,8 +360,8 @@ All copy lives here; components contain no user-facing strings except ARIA label
 ```ts
 import type { ImageMetadata } from "astro";
 
-export type IconName = "blocks" | "landmark" | "radar" | "dices" | "cpu" | "layout-panel-top"
-  | "trending-up" | "megaphone" | "code-xml" | "linkedin" | "instagram" | "mail" | "copy" | "menu" | "x";
+export type IconName = "blocks" | "landmark" | "dices" | "cpu" | "layout-panel-top" | "trending-up"
+  | "code-xml" | "linkedin" | "instagram" | "mail" | "copy" | "check" | "menu" | "x" | "arrow-right";
 
 export interface Title { lead: string; strong: string }   // rendered as: lead <strong>strong</strong>
 export interface Heading { eyebrow: string; title: Title; lede?: string }
@@ -328,31 +372,29 @@ export interface WhyItem { title: string; emphasis?: string; body: string; tone:
 export interface TeamMember {
   name: string; role: string;
   photo: ImageMetadata | null;       // import from src/assets/team/<slug>.jpg
+  alt?: string;                      // when "Portrait of <name>" doesn't fit
   linkedin: string | null;
 }
 
-export const site = {
-  url: "https://hantii.com",
-  name: "Hantii",
-  legalName: "Hantii Agency",
-  meta: { title: string, description: string },
-  contacts: {
-    email: "team@hantii.com",
-    linkedin: "https://www.linkedin.com/company/hantii-agency",
-    instagram: "https://www.instagram.com/hantii.agency",
-  },
-  nav: [{ label: "About", href: "#about" }, /* Domain, Approach, Why us, Team, Contacts */],
-  hero: { eyebrow, accent, rest, lede, primary, secondary },
-  stats: Stat[4],                    // exactly the approved four
-  domain: Heading & { industries: DomainRow[]; functions: DomainRow[] },
-  approach: Heading & { principles: Principle[4] },
-  why: Heading & { items: WhyItem[3] },
-  team: Heading & { intro: string; members: TeamMember[] },
-  contact: Heading & { cta: string },
-};
+// Each block is its own export; the shape, in short:
+export const contacts = { email, linkedin, linkedinLabel, instagram, instagramLabel };
+export const site = { url, name, legalName, meta: { title, description, ogImageAlt }, nav: Link[6], headerCta: Link };
+export const hero = { eyebrow, title: { first, second }, points: string[3], primary: Link, secondary: Link,
+  pipeline: { label, columns: { role, status }, status, roles: string[3], caption } };
+export const stats: { heading; items: Stat[4] };      // exactly the approved four
+export const about: Heading;                           // chips reuse domain.industries
+export const domain: Heading & { industriesTitle; industries: DomainRow[4]; functionsTitle; functions: DomainRow[3] };
+export const approach: Heading & { principles: Principle[4] };
+export const why: Heading & { cta: Link; items: WhyItem[3] };
+export const team: Heading & { photoPending; members: TeamMember[]; card: { title: { before, strong, after }; body; cta: Link } };
+export const people: Heading & { members: TeamMember[] };
+export const contact: Heading & { rows; copy: { idle, done, fallback };
+  form: { title, lede, email, emailError, message, required, submit, subject, replyTo, handoff } };
+export const notFound: Heading & { cta: Link };
+export const footer = { blurb, agencyTitle, agency: Link[5], contactsTitle, emailHref, copyright(year), tagline };
 ```
 
-Copy values come from requirements §5.4. The team, in order:
+Copy values come from requirements §5.4. The founders, in order (the Team section's `people.members` follow the same shape, without LinkedIn URLs):
 
 ```ts
 import vlada from "../assets/team/vlada-havriushova.jpg";
@@ -366,16 +408,18 @@ members: [
 ],
 ```
 
-Adding a member: prepare the portrait (§12), put it in `src/assets/team/`, import it and add an entry. Only people the owner has supplied (requirements §5.2).
+Adding a member: prepare the portrait (§12), put it in `src/assets/team/`, import it and add an entry to `team.members` (founders) or `people.members` (Team). Only people the owner has supplied (requirements §5.2).
 
 ## 9. Client-side behaviour
 
-The only script is `src/scripts/site.ts`, included once from `Base.astro` and bundled by Astro into `/_astro/*.js` (≤ 3 KB gzip).
+The only script is `src/scripts/site.ts`, included once from `Base.astro` and bundled by Astro into `/_astro/*.js` (≤ 3 KB gzip; 1.2 KB at v1.1).
 
 1. **Menu**: `#menu a` click → `menu.hidePopover()`.
 2. **Copy email**: if `navigator.clipboard?.writeText` exists, clicking Copy writes the address, sets the live status to "Copied" and the button label to "Copied" for 2s. If it doesn't exist or rejects, select the email text (Range API) and set the status to "Press Ctrl+C or ⌘C to copy".
+3. **Count-up**: only when `prefers-reduced-motion: no-preference` matches and IntersectionObserver exists. Each `[data-count]` value is parsed as `/^(\d+)(.*)$/`, set to `0<suffix>`, and counted up once over 1.2s (ease-out cubic, rAF) when half of it is in view. Screen readers read the hidden copy of the final value (§7.7).
+4. **Contact form**: sets `noValidate` and handles submit itself. Invalid or empty email (`checkValidity()` after trimming): unhide the error, set `aria-invalid="true"` and `aria-describedby` to the error, focus the field; typing a valid address clears it. Valid: set `location.href` to `mailto:{to}?subject={subject}&body={message}\n\nReply to: {email}` (all `encodeURIComponent`) and announce the handoff line in the status. It never says the message was sent: there is no backend.
 
-No-JS behaviour, via `<noscript><style>` in the head: hide the Copy button (email stays selectable). The menu needs no JS. Everything else is HTML and CSS.
+No-JS behaviour, via `<noscript><style>` in the head: hide the Copy button (email stays selectable). The menu needs no JS. The figures show their final values. The form posts to its `mailto:` action as `text/plain` after native validation. Everything else is HTML and CSS.
 
 `scroll-behavior: smooth` only inside `@media (prefers-reduced-motion: no-preference)`. The build must emit no inline executable `<script>` (CSP §10.3). Astro inlines script chunks under 4 KB by default, so `astro.config.mjs` sets `vite.build.assetsInlineLimit` to a function that returns `false` for `.js` files; `site.ts` ships as `/_astro/*.js`. Only `type="application/ld+json"` is inline.
 
@@ -403,12 +447,13 @@ Stylesheets go the other way: `build.inlineStylesheets: "always"` puts the page'
   ],
   "workers_dev": true,
   "preview_urls": true,
+  "previews": {},
   "observability": { "enabled": true },
   "dev": { "ip": "127.0.0.1", "port": 8787, "host": "localhost" }
 }
 ```
 
-`dev.host` matters: without it, `wrangler dev` forwards local requests as the first route's host (`hantii.com`) and the Worker redirects them to production.
+`previews: {}` is required by `wrangler preview`, the non-production deploy command (§10.4); empty means previews inherit the top-level settings, and `wrangler deploy` ignores it. `dev.host` matters: without it, `wrangler dev` forwards local requests as the first route's host (`hantii.com`) and the Worker redirects them to production.
 
 Custom domains create the apex and `www` DNS records and certificates automatically; the deploy fails if conflicting A/AAAA/CNAME records already exist (requirements O3).
 
@@ -442,14 +487,14 @@ The redirect applies only to the production hostnames; `*.workers.dev` preview h
 
 | Header | Value |
 | --- | --- |
-| `Content-Security-Policy` | `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests` |
+| `Content-Security-Policy` | `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests` |
 | `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` |
 | `X-Content-Type-Options` | `nosniff` |
 | `Referrer-Policy` | `strict-origin-when-cross-origin` |
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), payment=(), usb=()` |
 | `X-Frame-Options` | `DENY` |
 
-`style-src 'unsafe-inline'` covers the inlined page CSS, the `<noscript>` style and SVG style attributes; scripts stay strict. Responses that are not 2xx get the security headers but no `Cache-Control`.
+`style-src 'unsafe-inline'` covers the inlined page CSS, the `<noscript>` style and SVG style attributes; scripts stay strict. `form-action mailto:` lets the contact form hand off to the visitor's email app without JS (§7.17). Responses that are not 2xx get the security headers but no `Cache-Control`.
 
 | Path | `Cache-Control` |
 | --- | --- |
@@ -466,7 +511,7 @@ Workers Builds, connected once in the Cloudflare dashboard (Workers & Pages → 
 | Production branch | `main` |
 | Build command | `npm run build` |
 | Deploy command | `npx wrangler deploy` |
-| Non-production deploy command | `npx wrangler versions upload` (preview URL per branch) |
+| Non-production deploy command | `npx wrangler preview` (Workers Previews, open beta: a preview URL per branch; needs the `previews` block, §10.1). `npx wrangler versions upload` also works and needs no block. |
 | Root directory | `/` |
 | Node version | from `.node-version` (22) |
 
@@ -494,8 +539,8 @@ A failed build leaves the previous version live. Rollback: Workers & Pages → h
 
 | Asset | Source | Output |
 | --- | --- | --- |
-| Header/footer logo | `src/assets/brand/hantii-logo.png` | `<Image>` WebP at 1x/2x of the rendered height (≈ 130×40 and 260×80), `loading="eager"` in the header, `lazy` in the footer |
-| Team portraits | `src/assets/team/*.jpg` (prepared as below) | `<Image>` AVIF/WebP at 320/480/640 widths, lazy, explicit width/height (no CLS) |
+| Header/footer logo | `src/assets/brand/hantii-mark.png`, `hantii-wordmark.png` | Two `<Image>`s, WebP at 1x/2x of the rendered height (mark 40px, wordmark 23px), `loading="eager"` in the header, `lazy` in the footer |
+| Team portraits | `src/assets/team/*.jpg` (prepared as below) | `<Picture>` AVIF/WebP at 320/480/640 widths (never above the source), lazy, explicit width/height (no CLS) |
 | Icons, OG image | brand PNGs | `public/`, generated once by `npm run icons` |
 
 Portrait preparation (done once per photo, outside the build; originals stay out of the repo):
@@ -506,7 +551,9 @@ Portrait preparation (done once per photo, outside the build; originals stay out
 4. Strip all metadata (EXIF, GPS, maker notes). Re-saving through Pillow without `exif=` does this.
 5. Name it `<first>-<last>.jpg` in lowercase ASCII.
 
-Fonts: one Google Fonts CSS2 request with `display=swap`, preconnected. Fallback stacks (§4.2) keep metrics close enough to avoid visible shift; if CLS from fonts exceeds NFR-02, add `size-adjust` fallback faces.
+Fonts: one Google Fonts CSS2 request with `display=swap`, preconnected. The v1.1 hero copy is long enough that the swap moved the HeroFrame (CLS 0.14 in Lighthouse mobile), so `global.css` declares metric-matched fallback faces: `Geologica Fallback` (300, 400, 600–700), `Open Sans Fallback` (400, 600–700) and `Montserrat Fallback` (600–700), each `local("Arial")` or `local("Arial Bold")` with `size-adjust` and `ascent`/`descent`/`line-gap-override`. They sit second in each family stack (§4.2). Values were computed from the Google Fonts TTFs and macOS Arial: `size-adjust` = the font's frequency-weighted average advance width (a–z plus space, per em) ÷ Arial's; the overrides = hhea ascender/descender/lineGap ÷ (unitsPerEm × size-adjust). With them, CLS is 0–0.03. Recompute if a family or weight changes.
+
+Portrait sizing note: faces in the Team cards sit at the founders' eye line but not exactly at their scale. Yuliia's selfie is already as wide as the source allows, and Anastasiia's and Inna's were cropped to about 31% brow-to-chin to keep enough pixels.
 
 ## 13. Accessibility checklist
 
@@ -526,7 +573,7 @@ Fonts: one Google Fonts CSS2 request with `display=swap`, preconnected. Fallback
 | Worker | `npm test`: http→https and www→apex 301 with path+query kept; headers of §10.3 on HTML; immutable cache on `/_astro/x.js`; `noindex` on `*.workers.dev`; 404 passthrough |
 | Build output | `npm run build`; no inline executable scripts in `dist/**/*.html`; only approved figures appear (`grep` for digits in `dist/index.html` matches §5.2 of requirements) |
 | Visual | `npm run preview`, then the browser at 1440, 768 and 375 wide: each section against §5–§7; no horizontal scroll |
-| Interaction | Keyboard pass; menu open/Esc/link-close; Copy + screen-reader announcement; reduced motion |
+| Interaction | Keyboard pass; menu open/Esc/link-close; Copy + screen-reader announcement; form: empty/invalid email shows the error and focuses the field, a valid submit opens a `mailto:` with subject, message and reply-to and shows the handoff line; no-JS form posts to `mailto:`; reduced motion: no animations, final figures |
 | Quality | Lighthouse mobile on the preview and on production (NFR-01) |
 | Production | `curl -sI https://hantii.com` (200 + headers), `curl -sI https://www.hantii.com/x?y=1` (301 → `https://hantii.com/x?y=1`), `curl -sI https://hantii.com/nope` (404) |
 
@@ -539,4 +586,5 @@ Fonts: one Google Fonts CSS2 request with `display=swap`, preconnected. Fallback
 | A3 | Raster logos | The design system only ships PNGs; they are resized to WebP. SVG masters would be sharper and smaller (requirements O5). |
 | A4 | Google Fonts | Specified by the design system; the only third-party request (requirements O4). Self-hosting is a drop-in change: download the WOFF2 files to `public/fonts/`, add `@font-face`, remove the link and the two CSP origins. |
 | A5 | Astro script inlining vs strict CSP | Verified after every build (§9); fallback documented. |
-| A6 | Team portraits of uneven quality | Vlada's source is 3024×4032; Alona's is 800×800 (640×800 after cropping), so hers is slightly soft on 2× screens at the largest card size. Swap in a larger original when available; no code change needed (requirements O1). |
+| A6 | Team portraits of uneven quality | Vlada's source is 3024×4032; Alona's is 800×800 (640×800 after cropping). Team sources were 1024×1024, 706×1040 and 640×640 (Anastasiia and Inna 360×450, Yuliia 480×600 after cropping): fine on the ~272px desktop Team cards, soft on 2× screens at tablet widths. Swap in larger originals when available; no code change needed (requirements O1). |
+| A7 | Mail-app handoff instead of a form backend | Visitors without a configured mail app get no email client; the handoff line, the visible email and Copy remain. A Worker endpoint (e.g. Email Routing) would need spam protection, rate limits and a privacy notice (requirements O6). |

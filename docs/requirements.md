@@ -2,7 +2,7 @@
 
 | | |
 | --- | --- |
-| Status | Draft v1 — approved scope, copy pending owner review |
+| Status | v1.1 — revised 2026-10-23 for the updated design system (new hero, About and Team sections, contact form, motion) |
 | Owner | Ihor Pysmennyi |
 | Domain | `hantii.com` (Cloudflare) |
 | Design source | Hantii design system — https://claude.ai/artifact/9rnLwsg2jyT64C9VxSQhmB |
@@ -27,13 +27,14 @@ Hantii is a boutique recruiting agency for FinTech, MarTech and digital-driven b
 **In scope (v1)**
 
 - A single landing page at `/` with the sections in §4, in the order the design system fixes.
+- A contact form that hands the visitor a ready-to-send email (no backend, D3).
 - A branded 404 page.
 - Favicons, social share image, sitemap, robots.txt, structured data.
 - Hosting on Cloudflare at `hantii.com`, `www.hantii.com` redirecting to the apex, auto-deploy from the GitHub `main` branch.
 
 **Out of scope (v1)** — each needs a separate decision before work starts
 
-- Contact form or any backend that accepts user input.
+- Any backend that accepts user input. The contact form only opens the visitor's own email app.
 - CMS, blog, case studies, vacancies board, candidate portal.
 - Languages other than English.
 - Analytics, tracking pixels, cookies (and therefore a consent banner).
@@ -45,7 +46,7 @@ Hantii is a boutique recruiting agency for FinTech, MarTech and digital-driven b
 | --- | --- | --- |
 | D1 | Astro, static output, plain CSS on design tokens | Zero JS by default, build-time image optimisation, room for more pages later. |
 | D2 | Cloudflare Worker with static assets + Workers Builds Git integration | Domain is already on Cloudflare; push to `main` deploys; one small Worker handles redirect and headers. |
-| D3 | Contact = visible email + Copy button, LinkedIn, Instagram. No form. | Matches the brand book; no backend, no spam handling, no personal data stored. |
+| D3 | Contact = visible email + Copy button, LinkedIn, Instagram, and a form that hands off to the visitor's email app. No backend. | The design system adds the form and, with no backend, asks for a ready-to-send email instead. No spam handling, no personal data stored. Owner decision 2026-10-23. |
 | D4 | Copy drafted in the brand voice; team data only as supplied by the owner (§5.2) | Design fixes structure but not all copy; names, roles and photos must never be invented. |
 | D5 | English only | The brand book and all approved copy are English. |
 
@@ -55,23 +56,27 @@ Section IDs in brackets are the page anchors.
 
 | ID | Requirement |
 | --- | --- |
-| FR-01 | **Header** — sticky at the top on all widths. Shows the Hantii lockup logo (40px tall, 34px on phones) linking to `/`, navigation to About, Domain, Approach, Why us, Team, Contacts, and a small primary CONTACT US button to `#contacts`. |
+| FR-01 | **Header** — sticky at the top on all widths. Shows the Hantii mark and wordmark as two images (40px and 23px tall; 34px and 19.5px on phones) linking to the top of the home page, navigation to About, Domain, Approach, Why us, Team, Contacts, and a small primary CONTACT US button to `#contacts`. |
 | FR-02 | **Mobile menu** — below the header breakpoint the navigation collapses behind a menu button. The button exposes its state (`aria-expanded`), the panel closes on Esc, on outside click and when a link is chosen, and focus returns to the button. Without JavaScript the navigation stays reachable. |
-| FR-03 | **Hero** [`#about`] — eyebrow, h1 with its first phrase on its own line in the accent colour, lede, primary HIRE TOP TALENT (to `#contacts`) and ghost OUR APPROACH (to `#approach`). The HeroFrame illustration sits in the right column and stacks under the copy on narrow screens. |
-| FR-04 | **HeroFrame** — the blush blob behind a thin browser window, geometry copied from the design system. Inside the window, an illustrative shortlist labelled Candidate 01, 02, 03. The blob may drift slowly; motion stops under `prefers-reduced-motion`. The illustration is decorative and hidden from assistive tech. |
-| FR-05 | **StatBand** — dark panel with exactly the four approved figures (§5.2), overlapping the bottom of the hero. Four columns on desktop, two on narrow screens. |
-| FR-06 | **Our domain** [`#domain`] — heading plus two lists: Industries (Web3 & Crypto, FinTech, MarTech, iGaming, AI & Deep Tech) and Functions (Product, Growth, Marketing, Engineering & Tech), each row with a line icon in a tile. |
+| FR-03 | **Hero** — eyebrow, h1 "We run the hire, you run the business." with the first clause on its own line and the second on a `violet-100` marker, three points with gem bullets, primary HIRE TOP TALENT with an arrow (to `#contacts`) and ghost OUR APPROACH (to `#approach`). The headline and points sit above the fold at 1366×768 and 390×844. The HeroFrame sits in the right column and stacks under the copy on narrow screens. |
+| FR-04 | **HeroFrame** — the blush blob behind a thin browser window, geometry copied from the design system. Inside the window, a snapshot of the talent pipeline: a "Talent pipeline" label, a Role / Status header and three role titles, each with an "Open to work" pill. Role titles only, never candidate names; on phones the pill stacks under the role. A caption sits under the frame. The blob drifts slowly and the rows slide in once; motion stops under `prefers-reduced-motion`. The drawing is hidden from assistive tech; the list and caption are not. |
+| FR-05 | **StatBand** — dark panel with exactly the four approved figures (§5.2), overlapping the bottom of the hero. Four columns on desktop, two on narrow screens. The figures count up once as they come into view; screen readers and visitors without JS or with reduced motion get the final values. |
+| FR-06 | **Our domain** [`#domain`] — heading plus two lists: Industries (Web3 & Crypto, FinTech, iGaming, AI & Deep Tech) and Functions (Product, Growth, Engineering & Tech), each row with a line icon in a tile. |
 | FR-07 | **Our approach** [`#approach`] — on the mist ground; heading plus four principle cards, each with the gem marker, a title and a short body. |
-| FR-08 | **Why choose us** [`#why`] — an intro column that stays in view (sticky) while three items scroll past on desktop; the third item is a dark panel carrying "AI can't read people. We can." Stacks to one column on narrow screens. |
-| FR-09 | **Core team** [`#team`] — heading, one warm intro card, and a card per team member: 4:5 portrait, name, role, LinkedIn button. A member without a photo shows the placeholder state (gem on a mist-to-blush ground, "Photo coming soon"); a member without a LinkedIn URL shows no button. |
-| FR-10 | **Contacts** [`#contacts`] — dark panel with heading, lede, START A SEARCH button (opens the visitor's mail client addressed to the team) and three rows: email as selectable text with a Copy button, LinkedIn, Instagram. Copy puts `team@hantii.com` on the clipboard and announces "Copied" to screen readers; if copying is unavailable the button is hidden and the email stays selectable. |
-| FR-11 | **Footer** — mist ground, logo, navigation repeat, social links, copyright line with the current year. |
+| FR-08 | **Why choose us** [`#why`] — an intro column with a START A SEARCH button (to `#contacts`) that stays in view (sticky) while three items scroll past on desktop; the third item is a dark panel carrying "AI can't read people. We can." Stacks to one column on narrow screens. |
+| FR-09 | **Core team** [`#team`] — heading, a card per founder (4:5 portrait with name, role and LinkedIn button over it), then the one warm card: "A **boutique** team…", a line of body copy and TALK TO US (to `#contacts`). A member without a photo shows the placeholder state (gem on a mist-to-blush ground, "Photo coming soon"); a member without a LinkedIn URL shows no button. |
+| FR-10 | **Contacts** [`#contacts`] — dark panel with heading, lede, three rows (email as selectable text with a Copy button, LinkedIn, Instagram) and the contact form (FR-20). Copy puts `team@hantii.com` on the clipboard and announces "Copied" to screen readers; if copying is unavailable the button is hidden and the email stays selectable. |
+| FR-11 | **Footer** — mist ground; logo and a one-line description; Agency links (About us, Our domain, Our approach, Core team, Team); Contacts (email, LinkedIn, Instagram); "© {year} Hantii Agency. All rights reserved." and "Recruiting for FinTech · Web3 · iGaming · AI". |
 | FR-12 | **404** — branded page for any unknown path, served with HTTP 404, with a way back to the homepage. |
 | FR-13 | **Metadata** — unique title and meta description, canonical URL `https://hantii.com/`, Open Graph and Twitter card tags with a 1200×630 share image, favicons (32, 48, SVG or PNG mark) and Apple touch icon, `theme-color`. |
 | FR-14 | **Structured data** — JSON-LD `EmploymentAgency` with name, URL, logo, email and `sameAs` (LinkedIn, Instagram). |
 | FR-15 | **Crawling** — `sitemap-index.xml` generated at build; `robots.txt` allows all and points to the sitemap. Hosts other than `hantii.com` (e.g. preview URLs) send `X-Robots-Tag: noindex`. |
 | FR-16 | **Canonical host** — `www.hantii.com/*` answers 301 to `https://hantii.com/*`, keeping path and query. HTTP is upgraded to HTTPS. |
 | FR-17 | **In-page navigation** — anchor links scroll to their section without the sticky header covering the section heading; smooth scrolling only when reduced motion is not requested. |
+| FR-18 | **About us** [`#about`] — after the StatBand: heading, lede and the four industries as chips. The header's "About" link points here. |
+| FR-19 | **Team** [`#people`] — heading and a card per team member (§5.2): 4:5 photo with the name and role under it, so the photo stays whole. The placeholder state of FR-09 applies. Linked from the footer, not the header. |
+| FR-20 | **Contact form** — Email (required: `danger` asterisk and a "* Required" note) and Message (optional), then SEND MESSAGE. An empty or invalid email shows "Enter an email address, like name@company.com." and focuses the field. A valid submit opens the visitor's email app with a message to team@hantii.com (subject, their message, their email as reply-to) and shows a status line that never claims the message was sent. Without JavaScript the form posts to its `mailto:` action and the browser validates the email. |
+| FR-21 | **Motion** — sections rise 26px and fade in as they scroll into view (scroll-driven CSS, so content is never hidden where it can't animate); the hero marker draws in; the mark turns every 7s; hover lifts buttons 2px and cards 3px, zooms photos 4% and turns Domain rows `violet-600`. Everything stops under `prefers-reduced-motion`. |
 
 ## 5. Content requirements
 
@@ -79,7 +84,7 @@ Section IDs in brackets are the page anchors.
 
 - "We" (the agency) speaking to "you" (the hiring founder or manager). Short, declarative sentences. No hype, no superlatives, no emoji.
 - Principle headings are sentences ending in a full stop ("We protect your time."). Section titles use sentence case with the key phrase at the end set in bold.
-- Buttons are uppercase verbs, one to three words: HIRE TOP TALENT, CONTACT US, START A SEARCH, OUR APPROACH.
+- Buttons are uppercase verbs, one to three words: HIRE TOP TALENT, CONTACT US, START A SEARCH, OUR APPROACH, TALK TO US, SEND MESSAGE.
 - Markets and functions are named exactly as in FR-06.
 
 ### 5.2 Approved facts — the only figures and claims allowed
@@ -100,66 +105,95 @@ Core team (supplied by the owner 2026-09-27), in this order:
 | Vlada Havriushova | Co-Founder | https://www.linkedin.com/in/vlada-havriushova-50093914b/ | `src/assets/team/vlada-havriushova.jpg` |
 | Alona Zolotoverkha | Co-Founder | https://www.linkedin.com/in/alenazolotoverkha/ | `src/assets/team/alona-zolotoverkha.jpg` |
 
+Team (supplied by the owner 2026-10-23), in this order, no LinkedIn buttons:
+
+| Name | Role | Portrait |
+| --- | --- | --- |
+| Anastasiia Ivanova | Talent Sourcer | `src/assets/team/anastasiia-ivanova.jpg` |
+| Yuliia Pavelko | Recruiter | `src/assets/team/yuliia-pavelko.jpg` |
+| Inna Belova | Recruiter | `src/assets/team/inna-belova.jpg` |
+| TeamMate (the agency's cat) | Chief Napping Officer | `src/assets/team/teammate.jpg`, alt "Our ginger cat wearing a collar and tie" |
+
+"From the first key hires to the first 100+ employees" (About, Core team) is approved copy describing a client's growth stages, not a figure about Hantii.
+
 Never add statistics, client names or logos, testimonials, awards, team names, roles or photos that the owner has not supplied.
 
 ### 5.3 Placeholder policy
 
-- Every team member shown is a real person from §5.2. A future member supplied without a photo uses the placeholder state of FR-09 ("Photo coming soon"); without a LinkedIn URL, no button. Never add made-up members to fill the grid.
-- The HeroFrame shortlist is illustrative only ("Candidate 01"…). Never real names.
+- Every team member shown is real and listed in §5.2 (the people, and the agency's cat). A future member supplied without a photo uses the placeholder state of FR-09 ("Photo coming soon"); without a LinkedIn URL, no button. Never add made-up members to fill the grid.
+- The HeroFrame pipeline shows role titles only. Never candidate names.
 
-### 5.4 Copy deck (draft v1 — owner to approve)
+### 5.4 Copy deck (v1.1 — supplied by the owner 2026-10-23 with the design-system layout)
 
-Lines in quotation marks marked ✔ come from the brand book and are approved; everything else is draft.
+The source of truth for wording is `src/data/site.ts`; this deck records the approved structure and lines.
 
 **Meta**
 - Title: Hantii — Boutique recruiting for FinTech, MarTech & digital-driven businesses
 - Description: Hantii is a boutique recruiting agency for FinTech, MarTech, Web3, iGaming and AI businesses. 10+ years in recruiting, 500+ filled positions.
 
 **Hero**
-- Eyebrow: About us
-- H1: **Boutique recruiting** (accent line) / for FinTech, MarTech & digital-driven businesses ✔
-- Lede: We help ambitious startups build the right team at every stage of growth. ✔
-- Buttons: HIRE TOP TALENT · OUR APPROACH
+- Eyebrow: Boutique recruiting agency
+- H1: We run the hire, / **you run the business.** (marker)
+- Points: We've been in-house recruiters, so we know exactly where hiring breaks: slow processes, mismatched hires, managers buried in CVs. · We focus on people who stay and grow with your company, not placements that only look good on paper. · We run the hire end to end, so your managers talk only to finalists and spend their time on the business.
+- Buttons: HIRE TOP TALENT → · OUR APPROACH
+- HeroFrame: Talent pipeline · Role / Status · Senior Payment Specialist, Senior BizDev, Middle Blockchain Security Engineer — Open to work · Caption: A snapshot of candidates we already know and keep in touch with.
 
 **StatBand** — visually hidden heading "By the numbers"; figures from §5.2.
 
+**About us**
+- Eyebrow: About us
+- Title: A boutique recruiting agency for **FinTech, MarTech & digital-driven businesses.**
+- Lede: We help ambitious startups build the right team at every stage of growth, from the first key hires to the first 100+ employees.
+- Chips: Web3 & Crypto · FinTech · iGaming · AI & Deep Tech
+
 **Our domain**
 - Eyebrow: Our domain
-- Title: We work where **the market is moving.** ✔
-- Lede: We recruit for the markets we know from the inside, across the functions that drive growth.
+- Title: We work where **the market is moving.**
 - Lists: Industries · Functions (FR-06)
 
 **Our approach**
 - Eyebrow: Our approach
-- Title: How we **run every search.**
-- Lede: Four principles we keep, whatever the role.
-- Every search starts with clarity, not assumptions. ✔ — Before we contact a single candidate, we agree with you on the role, the must-haves and what a great hire looks like.
-- Quality over quantity. ✔ — You get a short list of people we have spoken to and vetted, not a stack of CVs.
-- Honesty, even when it's inconvenient. ✔ — If the brief, the budget or a candidate isn't right, we tell you early and plainly.
-- We protect your time. ✔ — We screen hard, so every interview you take is worth taking.
+- Title: Four principles behind **every search.**
+- Quality over quantity. — We identify exactly what you need and deliver only those who fit. Every search starts with clarity, not assumptions.
+- We protect your time. — We minimize hiring manager involvement at every stage. You focus on decisions, we handle everything else.
+- Trust over transactions. — Every client is a long-term partner, not just a brief. Our reputation is built one search at a time.
+- Honesty, even when it's inconvenient. — If a candidate isn't the right fit, or your expectations don't match the market, we say so. Every time.
 
 **Why choose us**
 - Eyebrow: Why choose us
-- Title: A partner who **knows your market.**
-- Lede: Boutique by design. The recruiters who take your brief are the ones who run your search.
-- Niche expertise. — 10+ years recruiting for FinTech, MarTech, Web3 and other digital-driven businesses. We know the roles and where the people are.
-- Speed without shortcuts. — Niche roles close in 30 days on average from brief to offer, and every candidate is still vetted by us.
-- (dark) AI can't read people. **We can.** ✔ — Tools help us search. The judgement on motivation, fit and character stays human.
+- Title: Recruiting, **read from the inside.**
+- Lede: Automation handles volume. We handle quality, and everything AI can't do.
+- Button: START A SEARCH →
+- We know recruiting from the inside. — We've seen it all, from the days when recruiters were dismissed as "CV sorters" to today, when everyone says AI will replace us. That journey taught us exactly where a recruiter's real value lies, and why it isn't going anywhere.
+- We evolve with the market. — Yes, the industry is changing, and so are we. We see that shift as an opportunity. Automation handles volume. We handle quality, and everything AI can't do.
+- (dark) AI can't read people. **We can.** — No algorithm can tell you how someone communicates, or whether they truly have the expertise their CV claims. Candidates now use AI to write polished CVs that sail through AI screening. That's why we focus where it matters: spotting patterns, holding real conversations, and verifying experience face to face.
 
 **Core team**
 - Eyebrow: Core team
-- Title: The people **behind your search.**
-- Warm intro card: A small team with deep networks in the markets we serve. You always know who is working on your role.
-- Member cards: Vlada Havriushova — Co-Founder ✔ · Alona Zolotoverkha — Co-Founder ✔ (§5.2), each with a LinkedIn button.
+- Title: The founders **behind every search.**
+- Founder cards: Vlada Havriushova — Co-Founder · Alona Zolotoverkha — Co-Founder (§5.2), each with a LinkedIn button.
+- Warm card: A **boutique** team for FinTech, MarTech and digital-driven businesses. — From the first key hires to the first 100+ employees, every search is run by the people you meet on the first call. — TALK TO US
+
+**Team**
+- Eyebrow: Team
+- Title: The team **on your searches.**
+- Cards: the four members of §5.2.
 
 **Contacts**
 - Eyebrow: Contacts
-- Title: Let's find **your next hire.**
-- Lede: Tell us about the role. We'll come back with how we would run the search.
-- Button: START A SEARCH
+- Title: Ready to build **the right team?**
+- Lede: Tell us about the role, the stage you're at and the timeline. We'll come back with an honest read of the market.
 - Rows: Email — team@hantii.com [COPY] · LinkedIn — hantii-agency · Instagram — @hantii.agency
+- Form: Send us a message — Leave your email and we'll get back to you. · Email * · Message (optional) · * Required · SEND MESSAGE
+- Error: Enter an email address, like name@company.com.
+- After submit: Your email app should open with your message ready. Press Send there to reach us.
+- Email handed to the mail app: subject "New search via hantii.com"; body = the message, then "Reply to: {email}".
 
-**Footer** — © {year} Hantii Agency
+**Footer**
+- Hantii Agency is a boutique recruiting agency for FinTech, MarTech, and digital-driven businesses.
+- Agency: About us · Our domain · Our approach · Core team · Team
+- Contacts: team@hantii.com · LinkedIn · Instagram
+- © {year} Hantii Agency. All rights reserved. · Recruiting for FinTech · Web3 · iGaming · AI
 
 **404**
 - Title: This page **doesn't exist.**
@@ -196,14 +230,15 @@ The release is accepted when all of the following hold on the production URL:
 8. Lighthouse mobile meets NFR-01; response headers meet NFR-07.
 9. Only the figures of §5.2 appear anywhere on the site; no invented names, clients or testimonials.
 10. A commit merged to `main` is live within minutes without any manual step.
+11. The contact form opens the visitor's email app with the message addressed to team@hantii.com and never claims the message was sent.
 
 ## 8. Owner inputs and open items
 
 | # | Item | Needed for | Status |
 | --- | --- | --- | --- |
-| O1 | Team: names, roles, LinkedIn URLs, portrait photos (4:5, at least 800×1000, head-and-shoulders) | FR-09, public launch | Done 2026-09-27 (§5.2). Alona's photo arrived as 800×800 and is 640×800 after cropping, below the 800×1000 target; slightly soft on high-DPI screens. A larger original would help. |
+| O1 | Team: names, roles, LinkedIn URLs, portrait photos (4:5, at least 800×1000, head-and-shoulders) | FR-09, FR-19, public launch | Founders done 2026-09-27, team done 2026-10-23 (§5.2). Below the 800×1000 target after cropping: Alona 640×800, Yuliia 480×600, Anastasiia and Inna 360×450. Fine on the ~270px Team cards; soft on high-DPI screens at tablet widths, where the cards are wider. Larger originals would help. |
 | O2 | Approve or edit the draft copy in §5.4 | Launch | Open |
 | O3 | Cloudflare: connect the GitHub repo in Workers & Pages; confirm `hantii.com` is in the same account and apex/www have no conflicting DNS records | FR-16, NFR-11 | Open |
 | O4 | Google Fonts are loaded from Google as the design system specifies. Self-hosting them would remove the only third-party request, which matters for GDPR. With inlined CSS, Lighthouse mobile performance is already 100 using Google Fonts, so this is now a privacy decision rather than a speed one. Keep or self-host? | NFR-08 | Open — default: Google Fonts |
 | O5 | Vector (SVG) versions of the logo for sharper rendering and a smaller favicon | FR-01, FR-13 | Nice to have |
-| O6 | Privacy/legal notice page — not required while the site sets no cookies and collects no data; revisit if analytics or a form are added | Legal | Deferred |
+| O6 | Privacy/legal notice page — not required while the site sets no cookies and collects no data. The contact form sends nothing to the site: it opens the visitor's own email app. Revisit if analytics or a form backend are added | Legal | Deferred |

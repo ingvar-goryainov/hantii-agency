@@ -1,25 +1,24 @@
 ---
-/** Hero (FR-03): eyebrow, h1 with the accent line, lede, two actions, HeroFrame. */
+/** Hero (FR-03): eyebrow, the promise as h1, three points, two actions, HeroFrame. */
 import Button from "./Button.astro";
 import Gem from "./Gem.astro";
 import HeroFrame from "./HeroFrame.astro";
 import { hero } from "../data/site";
-
-// Keep hyphenated compounds ("digital-driven") on one line.
-const restParts = hero.rest.split(/(\S+-\S+)/).filter(Boolean);
 ---
 
-<section id="about" class="hero" aria-labelledby="hero-title">
+<section class="hero" aria-labelledby="hero-title">
   <div class="container grid">
     <div class="copy">
       <span class="hn-eyebrow"><Gem size={12} />{hero.eyebrow}</span>
       <h1 id="hero-title" class="t-hero">
-        <span class="accent">{hero.accent}</span>{" "}
-        {restParts.map((part) => (/\S-\S/.test(part) ? <span class="nowrap">{part}</span> : part))}
+        <span class="first">{hero.title.first}</span>{" "}
+        <span class="marker">{hero.title.second}</span>
       </h1>
-      <p class="t-lede">{hero.lede}</p>
+      <ul class="points">
+        {hero.points.map((point) => <li><Gem size={14} class="bullet" />{point}</li>)}
+      </ul>
       <div class="actions">
-        <Button href={hero.primary.href}>{hero.primary.label}</Button>
+        <Button href={hero.primary.href} arrow>{hero.primary.label}</Button>
         <Button href={hero.secondary.href} variant="ghost">{hero.secondary.label}</Button>
       </div>
     </div>
@@ -31,12 +30,12 @@ const restParts = hero.rest.split(/(\S+-\S+)/).filter(Boolean);
 
 <style>
   .hero {
-    padding-top: var(--space-8);
-    padding-bottom: var(--space-8);
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-9);
   }
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     align-items: center;
     gap: var(--space-8);
   }
@@ -45,23 +44,46 @@ const restParts = hero.rest.split(/(\S+-\S+)/).filter(Boolean);
     justify-items: start;
     gap: var(--space-5);
   }
-  h1 { color: var(--ink); text-wrap: balance; }
-  .accent { display: block; color: var(--aqua-700); }
-  .nowrap { white-space: nowrap; }
-  .t-lede { max-width: 34em; }
+  h1 { color: var(--ink); }
+  .first { display: block; }
+  /* The second clause sits on a violet-100 marker (ink on it holds 12.1:1). */
+  .marker {
+    padding-inline: .1em;
+    margin-inline: -.1em;
+    background: linear-gradient(var(--violet-100), var(--violet-100)) no-repeat 0 70% / 100% 86%;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .points { display: grid; gap: var(--space-3); max-width: 36em; }
+  .points li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+  .points :global(.bullet) { margin-top: 7px; }
   .actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
     margin-top: var(--space-2);
   }
-  .art { width: 100%; max-width: 560px; justify-self: end; }
+  .art { width: 100%; max-width: 520px; justify-self: end; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .marker { animation: marker-draw .9s .3s cubic-bezier(.2, .7, .2, 1) both; }
+    @keyframes marker-draw {
+      from { background-size: 0% 86%; }
+    }
+  }
 
   @media (max-width: 1020px) {
     .grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
-    .art { max-width: 520px; justify-self: center; }
+    .art { justify-self: center; }
   }
   @media (max-width: 640px) {
-    .hero { padding-top: var(--space-7); padding-bottom: var(--space-7); }
+    .hero { padding-top: var(--space-5); }
   }
 </style>

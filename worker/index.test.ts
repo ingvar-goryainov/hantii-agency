@@ -67,6 +67,11 @@ describe("asset responses", () => {
     expect(csp).not.toMatch(/script-src[^;]*unsafe-inline/);
   });
 
+  it("lets forms post only to the site and to mailto:", () => {
+    const csp = SECURITY_HEADERS["Content-Security-Policy"];
+    expect(csp).toContain("form-action 'self' mailto:;");
+  });
+
   it("marks hashed build assets immutable", async () => {
     const { env } = envWith("x", { headers: { "content-type": "text/javascript" } });
     const res = await get("https://hantii.com/_astro/site.abc123.js", env);

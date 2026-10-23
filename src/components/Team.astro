@@ -1,20 +1,37 @@
 ---
-/** Core team (FR-09): heading, the one warm intro card, a card per member. */
+/** Core team (FR-09): heading, a card per founder, then the one warm card with the section's action. */
+import Button from "./Button.astro";
 import Gem from "./Gem.astro";
 import SectionHeading from "./SectionHeading.astro";
 import TeamCard from "./TeamCard.astro";
 import { team } from "../data/site";
+
+const { card } = team;
+// Keep hyphenated compounds ("digital-driven") on one line.
+const parts = card.title.after.split(/(\S+-\S+)/).filter(Boolean);
 ---
 
 <section id="team" class="section" aria-labelledby="team-title">
   <div class="container">
     <SectionHeading heading={team} id="team-title" />
     <div class="grid">
+      {team.members.map((member) => (
+        <TeamCard
+          member={member}
+          photoPending={team.photoPending}
+          sizes="(max-width: 560px) calc(100vw - 32px), (max-width: 860px) 50vw, 360px"
+        />
+      ))}
       <div class="intro">
         <Gem size={32} />
-        <p class="t-lede">{team.intro}</p>
+        <div class="intro-text">
+          <p class="lead">{card.title.before}{" "}<strong>{card.title.strong}</strong>{" "}
+            {parts.map((p) => (/\S-\S/.test(p) ? <span class="nowrap">{p}</span> : p))}
+          </p>
+          <p class="t-body">{card.body}</p>
+        </div>
+        <Button href={card.cta.href}>{card.cta.label}</Button>
       </div>
-      {team.members.map((member) => <TeamCard member={member} photoPending={team.photoPending} />)}
     </div>
   </div>
 </section>
@@ -29,12 +46,19 @@ import { team } from "../data/site";
   .intro {
     display: grid;
     align-content: space-between;
-    gap: var(--space-7);
+    justify-items: start;
+    gap: var(--space-6);
     padding: var(--space-6);
     border-radius: var(--radius-lg);
     background: var(--surface-blush);
   }
-  .intro .t-lede { color: var(--ink); }
+  .intro-text { display: grid; gap: var(--space-4); }
+  .lead {
+    font: 300 26px/1.25 var(--font-display);
+    letter-spacing: -.01em;
+    color: var(--ink);
+  }
+  .intro .t-body { color: var(--ink-muted); }
 
   @media (max-width: 860px) {
     .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

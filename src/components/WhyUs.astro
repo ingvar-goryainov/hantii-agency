@@ -1,5 +1,6 @@
 ---
-/** Why choose us (FR-08): sticky intro and three items, the last on surface-deep. */
+/** Why choose us (FR-08): sticky intro with the section's action, three items, the last on surface-deep. */
+import Button from "./Button.astro";
 import SectionHeading from "./SectionHeading.astro";
 import { why } from "../data/site";
 ---
@@ -8,6 +9,7 @@ import { why } from "../data/site";
   <div class="container grid">
     <div class="intro">
       <SectionHeading heading={why} id="why-title" />
+      <Button href={why.cta.href} arrow>{why.cta.label}</Button>
     </div>
     <ul class="items">
       {why.items.map((item) => (
@@ -33,6 +35,9 @@ import { why } from "../data/site";
   .intro {
     position: sticky;
     top: calc(var(--header-h) + var(--space-7));
+    display: grid;
+    justify-items: start;
+    gap: var(--space-6);
   }
   .items { display: grid; gap: var(--space-5); }
   .item { display: grid; gap: var(--space-3); padding: var(--space-6); }

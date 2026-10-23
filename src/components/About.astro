@@ -1,0 +1,31 @@
+---
+/** About us (FR-18): who we are, and the industries we recruit for as chips. */
+import SectionHeading from "./SectionHeading.astro";
+import { about, domain } from "../data/site";
+---
+
+<section id="about" class="section" aria-labelledby="about-title">
+  <div class="container">
+    <SectionHeading heading={about} id="about-title" />
+    <ul class="chips">
+      {domain.industries.map((industry) => <li>{industry.label}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+  }
+  .chips li {
+    padding: 10px var(--space-4);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--surface-mist);
+    color: var(--ink);
+    font: 600 14px/1.2 var(--font-label);
+  }
+</style>

@@ -15,6 +15,9 @@
   ],
   "workers_dev": true,
   "preview_urls": true,
+  // Workers Builds runs `npx wrangler preview` for non-production branches; it refuses to run
+  // without this block. Empty means previews inherit the settings above. `wrangler deploy` ignores it.
+  "previews": {},
   "observability": { "enabled": true },
   // Local `wrangler dev` would otherwise forward requests as the first route's host (hantii.com)
   // and the Worker would redirect them to production.

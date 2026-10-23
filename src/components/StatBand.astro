@@ -1,5 +1,9 @@
 ---
-/** StatBand (FR-05): the four approved figures on surface-deep, overlapping the hero. */
+/**
+ * StatBand (FR-05): the four approved figures on surface-deep, overlapping the hero.
+ * src/scripts/site.ts counts each figure up once; the real value stays in the HTML, and
+ * screen readers get it from a hidden copy instead of the animated one.
+ */
 import { stats } from "../data/site";
 ---
 
@@ -10,7 +14,7 @@ import { stats } from "../data/site";
       {stats.items.map((item) => (
         <div class="hn-stat">
           <dt>{item.label}</dt>
-          <dd>{item.value}</dd>
+          <dd><span aria-hidden="true" data-count>{item.value}</span><span class="visually-hidden">{item.value}</span></dd>
         </div>
       ))}
     </dl>

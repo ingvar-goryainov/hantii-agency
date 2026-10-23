@@ -1,0 +1,38 @@
+---
+/** Team (FR-19): the people on your searches, name and role under each photo. */
+import SectionHeading from "./SectionHeading.astro";
+import TeamCard from "./TeamCard.astro";
+import { people, team } from "../data/site";
+---
+
+<section id="people" class="section" aria-labelledby="people-title">
+  <div class="container">
+    <SectionHeading heading={people} id="people-title" />
+    <div class="grid">
+      {people.members.map((member) => (
+        <TeamCard
+          member={member}
+          photoPending={team.photoPending}
+          caption="below"
+          sizes="(max-width: 960px) calc(50vw - 28px), 272px"
+        />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+  }
+
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    .grid { gap: var(--space-6) var(--space-4); }
+  }
+</style>

@@ -1,59 +1,92 @@
 ---
 /**
- * Contacts (FR-10): dark panel with the email as selectable text and a Copy button,
- * LinkedIn and Instagram. The logo never sits here (dark ground).
+ * Contacts (FR-10, FR-20): dark panel with the email as selectable text and a Copy button,
+ * LinkedIn and Instagram, and a light form card. There is no backend: the form hands the
+ * visitor a ready-to-send email (src/scripts/site.ts; without JS, the mailto form action).
+ * The logo never sits here (dark ground).
  */
 import Button from "./Button.astro";
 import Icon from "./Icon.astro";
 import SectionHeading from "./SectionHeading.astro";
 import { contact, contacts } from "../data/site";
+
+const { form } = contact;
 ---
 
-<section id="contacts" class="section" aria-labelledby="contacts-title">
+<section id="contacts" class="section section--end" aria-labelledby="contacts-title">
   <div class="container">
     <div class="panel panel-deep on-deep">
       <div class="intro">
         <SectionHeading heading={contact} id="contacts-title" />
-        <Button href={contact.cta.href}>{contact.cta.label}</Button>
+        <ul class="rows">
+          <li class="row">
+            <span class="tile tile--deep"><Icon name="mail" /></span>
+            <span class="text">
+              <span class="t-eyebrow label">{contact.rows.email}</span>
+              <span class="value email" id="contact-email">{contacts.email}</span>
+            </span>
+            <button
+              class="copy-btn"
+              type="button"
+              data-copy={contacts.email}
+              data-target="contact-email"
+              data-done={contact.copy.done}
+              data-fallback={contact.copy.fallback}
+              aria-describedby="copy-status"
+            >
+              <Icon name="copy" size={18} class="icon-idle" />
+              <Icon name="check" size={18} class="icon-done" />
+              <span class="copy-label">{contact.copy.idle}</span>
+            </button>
+          </li>
+          <li class="row">
+            <span class="tile tile--deep"><Icon name="linkedin" /></span>
+            <span class="text">
+              <span class="t-eyebrow label">{contact.rows.linkedin}</span>
+              <a class="value" href={contacts.linkedin} rel="noopener">{contacts.linkedinLabel}</a>
+            </span>
+          </li>
+          <li class="row">
+            <span class="tile tile--deep"><Icon name="instagram" /></span>
+            <span class="text">
+              <span class="t-eyebrow label">{contact.rows.instagram}</span>
+              <a class="value" href={contacts.instagram} rel="noopener">{contacts.instagramLabel}</a>
+            </span>
+          </li>
+        </ul>
+        <p id="copy-status" class="visually-hidden" aria-live="polite"></p>
       </div>
 
-      <ul class="rows">
-        <li class="row">
-          <span class="tile tile--deep"><Icon name="mail" /></span>
-          <span class="text">
-            <span class="t-eyebrow label">{contact.rows.email}</span>
-            <span class="value email" id="contact-email">{contacts.email}</span>
-          </span>
-          <button
-            class="copy-btn"
-            type="button"
-            data-copy={contacts.email}
-            data-target="contact-email"
-            data-done={contact.copy.done}
-            data-fallback={contact.copy.fallback}
-            aria-describedby="copy-status"
-          >
-            <Icon name="copy" size={18} class="icon-idle" />
-            <Icon name="check" size={18} class="icon-done" />
-            <span class="copy-label">{contact.copy.idle}</span>
-          </button>
-        </li>
-        <li class="row">
-          <span class="tile tile--deep"><Icon name="linkedin" /></span>
-          <span class="text">
-            <span class="t-eyebrow label">{contact.rows.linkedin}</span>
-            <a class="value" href={contacts.linkedin} rel="noopener">{contacts.linkedinLabel}</a>
-          </span>
-        </li>
-        <li class="row">
-          <span class="tile tile--deep"><Icon name="instagram" /></span>
-          <span class="text">
-            <span class="t-eyebrow label">{contact.rows.instagram}</span>
-            <a class="value" href={contacts.instagram} rel="noopener">{contacts.instagramLabel}</a>
-          </span>
-        </li>
-      </ul>
-      <p id="copy-status" class="visually-hidden" aria-live="polite"></p>
+      <form
+        class="form"
+        action={`mailto:${contacts.email}`}
+        method="post"
+        enctype="text/plain"
+        aria-labelledby="form-title"
+        data-mail-form
+        data-to={contacts.email}
+        data-subject={form.subject}
+        data-reply-to={form.replyTo}
+      >
+        <div class="form-head">
+          <h3 id="form-title" class="t-card-title">{form.title}</h3>
+          <p class="form-lede">{form.lede}</p>
+        </div>
+        <div class="field">
+          <label for="form-email">{form.email} <span class="req" aria-hidden="true">*</span></label>
+          <input id="form-email" name="email" type="email" required autocomplete="email" spellcheck="false" data-error="form-email-error" />
+          <p id="form-email-error" class="error" hidden>{form.emailError}</p>
+        </div>
+        <div class="field">
+          <label for="form-message">{form.message}</label>
+          <textarea id="form-message" name="message" rows="5"></textarea>
+        </div>
+        <p class="note"><span class="req" aria-hidden="true">*</span> {form.required}</p>
+        <div class="submit">
+          <Button type="submit">{form.submit}</Button>
+          <p class="handoff" role="status" data-handoff={form.handoff}></p>
+        </div>
+      </form>
     </div>
   </div>
 </section>
@@ -63,10 +96,10 @@ import { contact, contacts } from "../data/site";
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--space-8);
-    align-items: center;
+    align-items: start;
     padding: var(--space-8);
   }
-  .intro { display: grid; justify-items: start; gap: var(--space-6); }
+  .intro { display: grid; gap: var(--space-7); }
 
   .rows { display: grid; gap: var(--space-3); }
   .row {
@@ -121,11 +154,61 @@ import { contact, contacts } from "../data/site";
   .copy-btn.is-done :global(.icon-idle) { display: none; }
   .copy-btn.is-done :global(.icon-done) { display: block; color: var(--emerald-300); }
 
+  /* Form card: a light card on the dark panel. */
+  .form {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .form :focus-visible { outline-color: var(--violet-600); }
+  .form-head { display: grid; gap: var(--space-2); }
+  .form-lede { color: var(--ink-muted); }
+  .field { display: grid; gap: var(--space-2); }
+  label { font: 600 14px/1.3 var(--font-body); color: var(--ink); }
+  .req { color: var(--danger); }
+  input,
+  textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    font: 400 16px/1.5 var(--font-body);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  textarea { min-height: 128px; resize: vertical; }
+  input:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--violet-600);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--violet-600) 22%, transparent);
+  }
+  input[aria-invalid="true"] { border-color: var(--danger); }
+  input[aria-invalid="true"]:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 18%, transparent); }
+  .error { color: var(--danger); font-size: 14px; line-height: 1.45; }
+  .note { margin-top: calc(-1 * var(--space-2)); font-size: 14px; line-height: 1.45; color: var(--ink-muted); }
+  .submit { display: grid; justify-items: start; }
+  .handoff:not(:empty) {
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--emerald-100);
+    color: var(--emerald-800);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
   @media (max-width: 960px) {
     .panel { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
   }
   @media (max-width: 640px) {
     .panel { padding: var(--space-6) var(--space-4); }
+    .form { padding: var(--space-5) var(--space-4); }
   }
   @media (max-width: 560px) {
     .row { flex-wrap: wrap; }

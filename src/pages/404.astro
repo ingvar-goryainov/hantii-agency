@@ -6,7 +6,7 @@ import { notFound, site } from "../data/site";
 ---
 
 <Base title={`Page not found — ${site.name}`} noindex>
-  <section class="section not-found" aria-labelledby="not-found-title">
+  <section class="section section--end not-found" aria-labelledby="not-found-title">
     <div class="container">
       <SectionHeading heading={notFound} id="not-found-title" level={1} />
       <Button href={notFound.cta.href} class="cta">{notFound.cta.label}</Button>
