@@ -447,12 +447,13 @@ Stylesheets go the other way: `build.inlineStylesheets: "always"` puts the page'
   ],
   "workers_dev": true,
   "preview_urls": true,
+  "previews": {},
   "observability": { "enabled": true },
   "dev": { "ip": "127.0.0.1", "port": 8787, "host": "localhost" }
 }
 ```
 
-`dev.host` matters: without it, `wrangler dev` forwards local requests as the first route's host (`hantii.com`) and the Worker redirects them to production.
+`previews: {}` is required by `wrangler preview`, the non-production deploy command (§10.4); empty means previews inherit the top-level settings, and `wrangler deploy` ignores it. `dev.host` matters: without it, `wrangler dev` forwards local requests as the first route's host (`hantii.com`) and the Worker redirects them to production.
 
 Custom domains create the apex and `www` DNS records and certificates automatically; the deploy fails if conflicting A/AAAA/CNAME records already exist (requirements O3).
 
@@ -510,7 +511,7 @@ Workers Builds, connected once in the Cloudflare dashboard (Workers & Pages → 
 | Production branch | `main` |
 | Build command | `npm run build` |
 | Deploy command | `npx wrangler deploy` |
-| Non-production deploy command | `npx wrangler versions upload` (preview URL per branch) |
+| Non-production deploy command | `npx wrangler preview` (Workers Previews, open beta: a preview URL per branch; needs the `previews` block, §10.1). `npx wrangler versions upload` also works and needs no block. |
 | Root directory | `/` |
 | Node version | from `.node-version` (22) |
 
