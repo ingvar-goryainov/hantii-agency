@@ -204,9 +204,24 @@ export const people: Heading & { members: TeamMember[] } = {
   eyebrow: "Team",
   title: { lead: "The team", strong: "on your searches." },
   members: [
-    { name: "Anastasiia Ivanova", role: "Talent Sourcer", photo: anastasiia, linkedin: null },
-    { name: "Yuliia Pavelko", role: "Recruiter", photo: yuliia, linkedin: null },
-    { name: "Inna Belova", role: "Recruiter", photo: inna, linkedin: null },
+    {
+      name: "Anastasiia Ivanova",
+      role: "Talent Sourcer",
+      photo: anastasiia,
+      linkedin: "https://www.linkedin.com/in/anastasiia-ivanova-5bb98242b/",
+    },
+    {
+      name: "Yuliia Pavelko",
+      role: "Recruiter",
+      photo: yuliia,
+      linkedin: "https://www.linkedin.com/in/yuliia-pavelko-45b643387/",
+    },
+    {
+      name: "Inna Belova",
+      role: "Recruiter",
+      photo: inna,
+      linkedin: "https://www.linkedin.com/in/inna-belova-089355149/",
+    },
     {
       name: "TeamMate",
       role: "Chief Napping Officer",

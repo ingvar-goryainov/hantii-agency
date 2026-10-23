@@ -115,8 +115,15 @@ const widths = photo
   }
   .linkedin:hover { border-color: var(--violet-300); }
 
-  /* Below (team): the photo stays whole; name and role sit under it. */
-  .member--below .caption { padding-top: var(--space-4); }
+  /* Below (team): the photo stays whole; name and role sit under it, LinkedIn beside them. */
+  .member--below .caption {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+  }
+  .member--below .who { min-width: 0; }
   .member--below .name { font-size: 20px; color: var(--ink); }
   .member--below .role { color: var(--aqua-700); line-height: 1.4; }
 
@@ -137,10 +144,13 @@ const widths = photo
   .member--overlay.member--pending .caption { background: none; }
   .member--overlay.member--pending .name { color: var(--ink); }
   .member--overlay.member--pending .role { color: var(--aqua-700); }
+  /* On light grounds the LinkedIn button is light too. */
+  .member--below .linkedin,
   .member--pending .linkedin {
     border-color: var(--line);
     background: var(--surface);
     color: var(--ink);
   }
+  .member--below .linkedin:hover,
   .member--pending .linkedin:hover { border-color: var(--violet-600); }
 </style>
