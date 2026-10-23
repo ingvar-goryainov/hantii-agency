@@ -59,7 +59,7 @@ Section IDs in brackets are the page anchors.
 | FR-01 | **Header** — sticky at the top on all widths. Shows the Hantii mark and wordmark as two images (40px and 23px tall; 34px and 19.5px on phones) linking to the top of the home page, navigation to About, Domain, Approach, Why us, Team, Contacts, and a small primary CONTACT US button to `#contacts`. |
 | FR-02 | **Mobile menu** — below the header breakpoint the navigation collapses behind a menu button. The button exposes its state (`aria-expanded`), the panel closes on Esc, on outside click and when a link is chosen, and focus returns to the button. Without JavaScript the navigation stays reachable. |
 | FR-03 | **Hero** — eyebrow, h1 "We run the hire, you run the business." with the first clause on its own line and the second on a `violet-100` marker, three points with gem bullets, primary HIRE TOP TALENT with an arrow (to `#contacts`) and ghost OUR APPROACH (to `#approach`). The headline and points sit above the fold at 1366×768 and 390×844. The HeroFrame sits in the right column and stacks under the copy on narrow screens. |
-| FR-04 | **HeroFrame** — the blush blob behind a thin browser window, geometry copied from the design system. Inside the window, a snapshot of the talent pipeline: a "Talent pipeline" label, a Role / Status header and three role titles, each with an "Open to work" pill. Role titles only, never candidate names; on phones the pill stacks under the role. A caption sits under the frame. The blob drifts slowly and the rows slide in once; motion stops under `prefers-reduced-motion`. The drawing is hidden from assistive tech; the list and caption are not. |
+| FR-04 | **HeroFrame** — the blush blob behind a thin browser window, geometry copied from the design system. Inside the window, a snapshot of the talent pipeline: a "Talent pipeline" label, a Role / Status header and three role titles, each with an "Open to work" pill. Role titles only, never candidate names; on phones the pill stacks under the role. The caption sits inside the window as the table's footer. The blob drifts slowly and the rows slide in once; motion stops under `prefers-reduced-motion`. The drawing is hidden from assistive tech; the list and caption are not. |
 | FR-05 | **StatBand** — dark panel with exactly the four approved figures (§5.2), overlapping the bottom of the hero. Four columns on desktop, two on narrow screens. The figures count up once as they come into view; screen readers and visitors without JS or with reduced motion get the final values. |
 | FR-06 | **Our domain** [`#domain`] — heading plus two lists: Industries (Web3 & Crypto, FinTech, iGaming, AI & Deep Tech) and Functions (Product, Growth, Engineering & Tech), each row with a line icon in a tile. |
 | FR-07 | **Our approach** [`#approach`] — on the mist ground; heading plus four principle cards, each with the gem marker, a title and a short body. |
@@ -74,7 +74,7 @@ Section IDs in brackets are the page anchors.
 | FR-16 | **Canonical host** — `www.hantii.com/*` answers 301 to `https://hantii.com/*`, keeping path and query. HTTP is upgraded to HTTPS. |
 | FR-17 | **In-page navigation** — anchor links scroll to their section without the sticky header covering the section heading; smooth scrolling only when reduced motion is not requested. |
 | FR-18 | **About us** [`#about`] — after the StatBand: heading, lede and the four industries as chips. The header's "About" link points here. |
-| FR-19 | **Team** [`#people`] — heading and a card per team member (§5.2): 4:5 photo with the name and role under it, so the photo stays whole. The placeholder state of FR-09 applies. Linked from the footer, not the header. |
+| FR-19 | **Team** [`#people`] — heading and a card per team member (§5.2): 4:5 photo with the name and role under it, so the photo stays whole, and a LinkedIn button beside them when the member has a profile. The placeholder state of FR-09 applies. Linked from the footer, not the header. |
 | FR-20 | **Contact form** — Email (required: `danger` asterisk and a "* Required" note) and Message (optional), then SEND MESSAGE. An empty or invalid email shows "Enter an email address, like name@company.com." and focuses the field. A valid submit opens the visitor's email app with a message to team@hantii.com (subject, their message, their email as reply-to) and shows a status line that never claims the message was sent. Without JavaScript the form posts to its `mailto:` action and the browser validates the email. |
 | FR-21 | **Motion** — sections rise 26px and fade in as they scroll into view (scroll-driven CSS, so content is never hidden where it can't animate); the hero marker draws in; the mark turns every 7s; hover lifts buttons 2px and cards 3px, zooms photos 4% and turns Domain rows `violet-600`. Everything stops under `prefers-reduced-motion`. |
 
@@ -105,14 +105,14 @@ Core team (supplied by the owner 2026-09-27), in this order:
 | Vlada Havriushova | Co-Founder | https://www.linkedin.com/in/vlada-havriushova-50093914b/ | `src/assets/team/vlada-havriushova.jpg` |
 | Alona Zolotoverkha | Co-Founder | https://www.linkedin.com/in/alenazolotoverkha/ | `src/assets/team/alona-zolotoverkha.jpg` |
 
-Team (supplied by the owner 2026-10-23), in this order, no LinkedIn buttons:
+Team (supplied by the owner 2026-10-23), in this order:
 
-| Name | Role | Portrait |
-| --- | --- | --- |
-| Anastasiia Ivanova | Talent Sourcer | `src/assets/team/anastasiia-ivanova.jpg` |
-| Yuliia Pavelko | Recruiter | `src/assets/team/yuliia-pavelko.jpg` |
-| Inna Belova | Recruiter | `src/assets/team/inna-belova.jpg` |
-| TeamMate (the agency's cat) | Chief Napping Officer | `src/assets/team/teammate.jpg`, alt "Our ginger cat wearing a collar and tie" |
+| Name | Role | LinkedIn | Portrait |
+| --- | --- | --- | --- |
+| Anastasiia Ivanova | Talent Sourcer | https://www.linkedin.com/in/anastasiia-ivanova-5bb98242b/ | `src/assets/team/anastasiia-ivanova.jpg` |
+| Yuliia Pavelko | Recruiter | https://www.linkedin.com/in/yuliia-pavelko-45b643387/ | `src/assets/team/yuliia-pavelko.jpg` |
+| Inna Belova | Recruiter | https://www.linkedin.com/in/inna-belova-089355149/ | `src/assets/team/inna-belova.jpg` |
+| TeamMate (the agency's cat) | Chief Napping Officer | — | `src/assets/team/teammate.jpg`, alt "Our ginger cat wearing a collar and tie" |
 
 "From the first key hires to the first 100+ employees" (About, Core team) is approved copy describing a client's growth stages, not a figure about Hantii.
 
@@ -136,7 +136,7 @@ The source of truth for wording is `src/data/site.ts`; this deck records the app
 - H1: We run the hire, / **you run the business.** (marker)
 - Points: We've been in-house recruiters, so we know exactly where hiring breaks: slow processes, mismatched hires, managers buried in CVs. · We focus on people who stay and grow with your company, not placements that only look good on paper. · We run the hire end to end, so your managers talk only to finalists and spend their time on the business.
 - Buttons: HIRE TOP TALENT → · OUR APPROACH
-- HeroFrame: Talent pipeline · Role / Status · Senior Payment Specialist, Senior BizDev, Middle Blockchain Security Engineer — Open to work · Caption: A snapshot of candidates we already know and keep in touch with.
+- HeroFrame: Talent pipeline · Role / Status · Senior Payment Specialist, Senior BizDev, Middle Blockchain Security Engineer — Open to work · Footer inside the window: A snapshot of candidates we already know and keep in touch with.
 
 **StatBand** — visually hidden heading "By the numbers"; figures from §5.2.
 
@@ -177,7 +177,7 @@ The source of truth for wording is `src/data/site.ts`; this deck records the app
 **Team**
 - Eyebrow: Team
 - Title: The team **on your searches.**
-- Cards: the four members of §5.2.
+- Cards: the four members of §5.2; LinkedIn buttons for the three people.
 
 **Contacts**
 - Eyebrow: Contacts

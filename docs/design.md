@@ -273,13 +273,14 @@ HeroFrame — keep this geometry exactly (viewBox `436 208 284 250`):
 .hn-frame .dot-a { fill:var(--emerald-500); } .hn-frame .dot-b { fill:var(--ink); } .hn-frame .dot-c { fill:var(--violet-600); }
 ```
 
-Markup: `<figure>` → `.stage` (relative) holding the SVG above and `.window`, an HTML layer absolutely positioned over the window's content area (x 442.34–694.14, y 258.86–422.92 of the viewBox: `left 2.2324%`, `top 20.344%`, `width 88.662%`, `height 65.624%`, `overflow: hidden`, `container-type: inline-size`) → `figcaption` (`t-caption ink-muted`, centred). The SVG stays `aria-hidden`; the list and caption are read.
+Markup: `<figure>` → `.stage` (relative) holding the SVG above and `.window`, an HTML layer absolutely positioned over the window's content area (x 442.34–694.14, y 258.86–422.92 of the viewBox: `left 2.2324%`, `top 20.344%`, `width 88.662%`, `height 65.624%`, `overflow: hidden`, `container-type: inline-size`). The SVG stays `aria-hidden`; the list and its footer note are read.
 
-Window content (`.window-inner`, padding `3.6cqi 4.4cqi`; every size in `cqi` of the window, capped at the design values, so it scales with the drawing and always fits):
+Window content (`.window-inner`, a full-height flex column, padding `3.6cqi 4.4cqi`; every size in `cqi` of the window, capped at the design values, so it scales with the drawing and always fits):
 - `p#pipeline-label` "Talent pipeline": Montserrat 700, `min(12px, 3cqi)`, 0.14em, uppercase, `aqua-700`.
 - A Role / Status header row (`aria-hidden`), Montserrat 700 `min(11px, 2.7cqi)`, `ink-muted`.
 - `ul[aria-labelledby=pipeline-label]`, rows split by `line` hairlines: role (Geologica 600, `min(16px, 3.9cqi)`, `ink`) and, on the right, a pill: `emerald-100` ground, `emerald-800` text, `radius-pill`, with a 0.6em `emerald-500` dot.
-- Window narrower than 360px (`@container`): the header row hides and each row stacks the pill under the role (role `4.3cqi`, pill `3.4cqi`).
+- `p#pipeline-note`, the table's footer (the list's `aria-describedby`): pinned to the bottom of the window (`margin-top: auto`) under a `line` hairline, Open Sans `min(13px, 3.2cqi)`/1.4, `ink-muted`.
+- Window narrower than 360px (`@container`): the header row hides, each row stacks the pill under the role, and everything tightens so the rows and footer fit at any phone width (role `4.2cqi`, pill and footer `3.3cqi`, row padding `1.2cqi`). Measured from 320 to 1440px: no overflow; the footer is 10px at 375px wide, 8.4px at 320px.
 
 Motion (inside `prefers-reduced-motion: no-preference`): the blob rotates ±2° over 14s, `ease-in-out`, infinite, `transform-box: fill-box; transform-origin: center`; the rows slide in once from `translateX(-12px)` (transform only, so they are never hidden), staggered 0.12s; the dots pulse with a fading `box-shadow` ring every 2.8s.
 
@@ -316,7 +317,7 @@ Two columns 5/7. Left: SectionHeading and the START A SEARCH primary (with arrow
 **TeamCard**: `<article>` with a 4:5 `.frame` (`radius-lg`, `overflow: hidden`).
 - With photo: `<Picture>` AVIF/WebP, `object-fit: cover`. Portraits are pre-cropped to 4:5 with the eye line at 41.5% from the top (§12), so faces align across cards and `object-position` stays centred. Widths 320/480/640, never above the source width (a smaller source adds its own width instead). `sizes` comes from the grid: founders `(max-width: 560px) calc(100vw - 32px), (max-width: 860px) 50vw, 360px`; team `(max-width: 960px) calc(50vw - 28px), 272px`. Lazy. Alt is "Portrait of {name}" unless the member has an `alt` (TeamMate). With motion allowed, the photo zooms to 1.04 on card hover.
 - `caption="overlay"` (founders): the caption sits at the bottom of the photo over `linear-gradient(to top, color-mix(in srgb, var(--surface-deep) 92%, transparent), transparent)`, padding `space-5`: `h3.t-card-title ink-inverse` name, `p.t-eyebrow emerald-300` role; LinkedIn icon button (44×44, `surface-deep-raised`, `radius-md`, focus ring `violet-300`, `aria-label="<name> on LinkedIn"`) at the right.
-- `caption="below"` (team): the photo stays whole; under it, padding-top `space-4`, the name (`card-title` at 20px, `ink`) and role (`t-eyebrow aqua-700`).
+- `caption="below"` (team): the photo stays whole; under it, padding-top `space-4`, the name (`card-title` at 20px, `ink`) and role (`t-eyebrow aqua-700`), with the LinkedIn button (light: `surface`, `line` border, `ink` icon, `violet-600` border on hover) top-aligned beside them.
 - Placeholder (no photo): the frame gets `linear-gradient(160deg, var(--surface-mist), var(--surface-blush))` and a `line` border, a centred 64px Gem and the caption "Photo coming soon" (`t-caption ink-muted`); an overlay caption switches to `ink`/`aqua-700` with no gradient; no LinkedIn button when `linkedin` is null.
 
 ### 7.12 Contacts
@@ -394,7 +395,7 @@ export const notFound: Heading & { cta: Link };
 export const footer = { blurb, agencyTitle, agency: Link[5], contactsTitle, emailHref, copyright(year), tagline };
 ```
 
-Copy values come from requirements §5.4. The founders, in order (the Team section's `people.members` follow the same shape, without LinkedIn URLs):
+Copy values come from requirements §5.4. The founders, in order (the Team section's `people.members` follow the same shape; TeamMate has no LinkedIn URL):
 
 ```ts
 import vlada from "../assets/team/vlada-havriushova.jpg";

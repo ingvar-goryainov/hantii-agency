@@ -28,7 +28,7 @@ const { pipeline } = hero;
           <span>{pipeline.columns.role}</span>
           <span>{pipeline.columns.status}</span>
         </div>
-        <ul class="rows" aria-labelledby="pipeline-label">
+        <ul class="rows" aria-labelledby="pipeline-label" aria-describedby="pipeline-note">
           {pipeline.roles.map((role) => (
             <li>
               <span class="role">{role}</span>
@@ -36,10 +36,10 @@ const { pipeline } = hero;
             </li>
           ))}
         </ul>
+        <p class="note" id="pipeline-note">{pipeline.caption}</p>
       </div>
     </div>
   </div>
-  <figcaption class="t-caption">{pipeline.caption}</figcaption>
 </figure>
 
 <style>
@@ -63,7 +63,12 @@ const { pipeline } = hero;
     overflow: hidden;
     container-type: inline-size;
   }
-  .window-inner { padding: 3.6cqi 4.4cqi; }
+  .window-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 3.6cqi 4.4cqi;
+  }
 
   .label {
     font: 700 min(12px, 3cqi) / 1 var(--font-label);
@@ -112,25 +117,30 @@ const { pipeline } = hero;
     border-radius: 50%;
     background: var(--emerald-500);
   }
+  /* The table's footer: pinned to the bottom of the window. */
+  .note {
+    margin-top: auto;
+    padding-top: 2.2cqi;
+    border-top: 1px solid var(--line);
+    font: 400 min(13px, 3.2cqi) / 1.4 var(--font-body);
+    color: var(--ink-muted);
+  }
 
-  /* Phones: each row stacks the pill under the role; the column header no longer applies. */
+  /* Phones: each row stacks the pill under the role; the column header no longer applies.
+     Sizes are tighter here so the rows and the footer fit the window at every width. */
   @container (max-width: 359px) {
+    .window-inner { padding-block: 3cqi; }
     .cols { display: none; }
+    .label { font-size: 3.3cqi; margin-bottom: 1.8cqi; }
     .rows li {
       flex-direction: column;
       align-items: flex-start;
-      gap: 1.2cqi;
-      padding-block: 1.6cqi;
+      gap: .8cqi;
+      padding-block: 1.2cqi;
     }
-    .role { font-size: 4.3cqi; }
-    .pill { font-size: 3.4cqi; padding: .35em .75em; }
-    .label { font-size: 3.3cqi; }
-  }
-
-  figcaption {
-    margin-top: var(--space-3);
-    color: var(--ink-muted);
-    text-align: center;
+    .role { font-size: 4.2cqi; }
+    .pill { font-size: 3.3cqi; padding: .35em .75em; }
+    .note { font-size: 3.3cqi; line-height: 1.3; padding-top: 1.6cqi; }
   }
 
   @media (prefers-reduced-motion: no-preference) {
