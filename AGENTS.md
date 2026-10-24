@@ -45,6 +45,7 @@ Before you call a change done, all of these must pass: `npm run check`, `npm tes
 | Redirects, security and cache headers | `worker/policy.ts` (values) and `worker/index.ts` (handler), tested in `worker/index.test.ts` |
 | Hosting, domains | `wrangler.jsonc` |
 | Team portraits | `src/assets/team/<first>-<last>.jpg`: 4:5, eye line at 41.5%, metadata stripped (`docs/design.md` §12) |
+| About industry pictures | `src/assets/industries/<industry>.jpg`: 4:3, ≤ 960px wide, metadata stripped (`docs/design.md` §12); set as each industry's `picture` in `src/data/site.ts` |
 
 ## Brand rules (hard constraints)
 
@@ -58,7 +59,7 @@ These come from the Hantii design system. Breaking one means the change is wrong
 - **Shape:** cards are flat with a `line` border. The only shadow is `shadow-float`, on the open mobile menu and on card hover. Radii: `radius-sm` for buttons, `radius-md` for tiles and rows, `radius-lg` for cards and panels.
 - **Motif:** the split-diamond gem (emerald left, violet right, small gap) is the only decorative motif. Keep the HeroFrame SVG geometry exactly as in `docs/design.md` §7.6.
 - **Contact:** show the email as selectable text with a Copy button. Don't make a `mailto:` link the only way to reach the team. The contact form has no backend: it hands the visitor a ready-to-send email and never says a message was sent.
-- **Motion:** quiet and purposeful, and all of it stops under `prefers-reduced-motion`: sections rise 26px and fade in (scroll-driven CSS only, so content is never hidden where it can't animate), stats count up once, the hero marker draws in, "Open to work" dots pulse, the hero blob drifts ±2° over 14s, the mark turns every 7s. Hover: buttons lift 2px, cards 3px, photos zoom 4%, Domain rows turn `violet-600`.
+- **Motion:** quiet and purposeful, and all of it stops under `prefers-reduced-motion`: sections rise 26px and fade in (scroll-driven CSS only, so content is never hidden where it can't animate), stats count up once, the hero marker draws in, "Open to work" dots pulse, the hero blob drifts ±2° over 14s, the mark turns every 7s. Hover: buttons lift 2px, cards 3px, photos zoom 4%, Domain rows turn `violet-600`, an About chip and its picture highlight together.
 
 ## Code conventions
 

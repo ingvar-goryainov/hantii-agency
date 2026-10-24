@@ -73,10 +73,10 @@ Section IDs in brackets are the page anchors.
 | FR-15 | **Crawling** — `sitemap-index.xml` generated at build; `robots.txt` allows all and points to the sitemap. Hosts other than `hantii.com` (e.g. preview URLs) send `X-Robots-Tag: noindex`. |
 | FR-16 | **Canonical host** — `www.hantii.com/*` answers 301 to `https://hantii.com/*`, keeping path and query. HTTP is upgraded to HTTPS. |
 | FR-17 | **In-page navigation** — anchor links scroll to their section without the sticky header covering the section heading; smooth scrolling only when reduced motion is not requested. |
-| FR-18 | **About us** [`#about`] — after the StatBand: heading, lede and the four industries as chips. The header's "About" link points here. |
+| FR-18 | **About us** [`#about`] — after the StatBand: heading, lede and the four industries as chips, with a 2×2 grid of the owner's industry pictures (§5.2) beside them on desktop and under the chips on narrower screens. The pictures are decorative (the chips name the industries); hovering a chip highlights its picture and the other way round. The header's "About" link points here. |
 | FR-19 | **Team** [`#people`] — heading and a card per team member (§5.2): 4:5 photo with the name and role under it, so the photo stays whole, and a LinkedIn button beside them when the member has a profile. The placeholder state of FR-09 applies. Linked from the footer, not the header. |
 | FR-20 | **Contact form** — Email (required: `danger` asterisk and a "* Required" note) and Message (optional), then SEND MESSAGE. An empty or invalid email shows "Enter an email address, like name@company.com." and focuses the field. A valid submit opens the visitor's email app with a message to team@hantii.com (subject, their message, their email as reply-to) and shows a status line that never claims the message was sent. Without JavaScript the form posts to its `mailto:` action and the browser validates the email. |
-| FR-21 | **Motion** — sections rise 26px and fade in as they scroll into view (scroll-driven CSS, so content is never hidden where it can't animate); the hero marker draws in; the mark turns every 7s; hover lifts buttons 2px and cards 3px, zooms photos 4% and turns Domain rows `violet-600`. Everything stops under `prefers-reduced-motion`. |
+| FR-21 | **Motion** — sections rise 26px and fade in as they scroll into view (scroll-driven CSS, so content is never hidden where it can't animate); the hero marker draws in; the mark turns every 7s; hover lifts buttons 2px and cards 3px, zooms photos 4%, turns Domain rows `violet-600`, and highlights an About chip with its picture (`violet-600` border, picture zooms 4%). Everything stops under `prefers-reduced-motion`. |
 
 ## 5. Content requirements
 
@@ -116,6 +116,8 @@ Team (supplied by the owner 2026-10-23), in this order:
 
 "From the first key hires to the first 100+ employees" (About, Core team) is approved copy describing a client's growth stages, not a figure about Hantii.
 
+Industry pictures (supplied by the owner 2026-10-24, cleared for commercial use on hantii.com), one per industry, in chip order: `src/assets/industries/web3-crypto.jpg`, `fintech.jpg`, `igaming.jpg`, `ai-deep-tech.jpg`. They illustrate the industries, not Hantii's clients; the crypto symbols in the Web3 picture are not client logos.
+
 Never add statistics, client names or logos, testimonials, awards, team names, roles or photos that the owner has not supplied.
 
 ### 5.3 Placeholder policy
@@ -145,6 +147,7 @@ The source of truth for wording is `src/data/site.ts`; this deck records the app
 - Title: A boutique recruiting agency for **FinTech, MarTech & digital-driven businesses.**
 - Lede: We help ambitious startups build the right team at every stage of growth, from the first key hires to the first 100+ employees.
 - Chips: Web3 & Crypto · FinTech · iGaming · AI & Deep Tech
+- Pictures: one per chip (§5.2), decorative, no captions
 
 **Our domain**
 - Eyebrow: Our domain

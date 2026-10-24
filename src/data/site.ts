@@ -10,6 +10,10 @@ import anastasiia from "../assets/team/anastasiia-ivanova.jpg";
 import yuliia from "../assets/team/yuliia-pavelko.jpg";
 import inna from "../assets/team/inna-belova.jpg";
 import teammate from "../assets/team/teammate.jpg";
+import web3Crypto from "../assets/industries/web3-crypto.jpg";
+import fintech from "../assets/industries/fintech.jpg";
+import igaming from "../assets/industries/igaming.jpg";
+import aiDeepTech from "../assets/industries/ai-deep-tech.jpg";
 
 export type IconName =
   | "blocks" | "landmark" | "dices" | "cpu"
@@ -22,6 +26,8 @@ export interface Heading { eyebrow: string; title: Title; lede?: string }
 export interface Link { label: string; href: string }
 export interface Stat { value: string; label: string }
 export interface DomainRow { label: string; icon: IconName }
+/** An industry also has a 4:3 picture for the About grid, prepared per docs/design.md §12. */
+export interface IndustryRow extends DomainRow { picture: ImageMetadata }
 export interface Principle { title: string; body: string }
 export interface WhyItem { title: string; emphasis?: string; body: string; tone: "light" | "deep" }
 export interface TeamMember {
@@ -102,7 +108,7 @@ export const about: Heading = {
 
 export const domain: Heading & {
   industriesTitle: string;
-  industries: DomainRow[];
+  industries: IndustryRow[];
   functionsTitle: string;
   functions: DomainRow[];
 } = {
@@ -110,10 +116,10 @@ export const domain: Heading & {
   title: { lead: "We work where", strong: "the market is moving." },
   industriesTitle: "Industries",
   industries: [
-    { label: "Web3 & Crypto", icon: "blocks" },
-    { label: "FinTech", icon: "landmark" },
-    { label: "iGaming", icon: "dices" },
-    { label: "AI & Deep Tech", icon: "cpu" },
+    { label: "Web3 & Crypto", icon: "blocks", picture: web3Crypto },
+    { label: "FinTech", icon: "landmark", picture: fintech },
+    { label: "iGaming", icon: "dices", picture: igaming },
+    { label: "AI & Deep Tech", icon: "cpu", picture: aiDeepTech },
   ],
   functionsTitle: "Functions",
   functions: [
