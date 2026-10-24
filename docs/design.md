@@ -55,6 +55,8 @@ src/
   assets/team/                   founders vlada-havriushova.jpg (1200×1500), alona-zolotoverkha.jpg (640×800);
                                  team anastasiia-ivanova.jpg, inna-belova.jpg (360×450), yuliia-pavelko.jpg (480×600),
                                  teammate.jpg (1120×1400): all 4:5, prepared per §12
+  assets/industries/             About pictures web3-crypto.jpg, ai-deep-tech.jpg (960×720), fintech.jpg (752×564),
+                                 igaming.jpg (508×381): all 4:3, prepared per §12
   data/site.ts                   all copy and content (§8)
   styles/tokens.css              design tokens as CSS custom properties (§4)
   styles/global.css              font fallbacks (§12), reset, base type, layout primitives, motion, hn-* classes (§5, §7)
@@ -167,7 +169,7 @@ The 48px phone `stat` and 22px phone `list-large` are site decisions (the design
 
 - **Container** `.container`: `max-width: 1160px` content + `padding-inline: var(--space-5)` (`--space-4` ≤ 640px), centred.
 - **Section rhythm** `.section`: `padding-top: var(--section-gap)` (72px ≤ 640px). `.section--mist` (Approach) and `.section--end` (Contacts, 404) also pad the bottom. Heading block to content: `--space-7`.
-- **Grounds**, top to bottom: header `surface` · hero `surface` (blob `surface-blush`) · StatBand `surface-deep` panel · About `surface` (chips `surface-mist`) · Domain `surface` · Approach `surface-mist` · Why us `surface` (third item `surface-deep`) · Core team `surface` (warm card `surface-blush`) · Team `surface` · Contacts `surface-deep` panel with a `surface` form card · footer `surface-mist`.
+- **Grounds**, top to bottom: header `surface` · hero `surface` (blob `surface-blush`) · StatBand `surface-deep` panel · About `surface` (chips `surface-mist`, industry pictures) · Domain `surface` · Approach `surface-mist` · Why us `surface` (third item `surface-deep`) · Core team `surface` (warm card `surface-blush`) · Team `surface` · Contacts `surface-deep` panel with a `surface` form card · footer `surface-mist`.
 - **Sticky header** height 72px (64px ≤ 960px). `html { scroll-padding-top: calc(header + var(--space-4)) }` so anchors land below it (FR-17).
 - **Z-index**: header 50; the menu popover sits in the top layer.
 
@@ -175,7 +177,7 @@ The 48px phone `stat` and 22px phone `list-large` are site decisions (the design
 | --- | --- |
 | 1020px | Hero stacks: copy above HeroFrame (HeroFrame max 520px wide, centred) |
 | 960px | Header navigation collapses behind the menu button; Team grid 4 → 2 columns; Contacts panel stacks (form under the rows) |
-| 860px | StatBand 2×2; Domain lists and Why-us stack to one column (intro no longer sticky); Core team grid 2 columns (warm card full width below); footer 2 columns (logo row above) |
+| 860px | StatBand 2×2; About pictures move under the chips (grid max 720px wide); Domain lists and Why-us stack to one column (intro no longer sticky); Core team grid 2 columns (warm card full width below); footer 2 columns (logo row above) |
 | 640px | Phone: gutter 16px, section gap 72px, mark 34px and wordmark 19.5px, fluid type at minimum |
 | 560px | Core team grid 1 column (Team stays 2); Contacts: Copy wraps under the email |
 | 400px | Footer 1 column |
@@ -337,7 +339,10 @@ The LinkedIn and Instagram links stretch over their whole row (`::after` overlay
 `Logo.astro`: the mark and the wordmark as two `<Image>`s (WebP, 1x/2x, `alt=""`, the parent link carries the name), `inline-flex`, 6px apart. Mark 40px and wordmark 23px tall; 34px and 19.5px ≤ 640px. With motion allowed, the mark turns once around its vertical axis every 7s (`perspective(160px) rotateY(0 → 360deg)` over the last 18% of a 7s loop); the wordmark stays still. Light grounds only. Prop `loading` (`eager` in the header).
 
 ### 7.16 About
-`About.astro`, `#about`, right after the StatBand: SectionHeading ("About us", split-weight title, lede), then the industries from `domain.industries` as chips: `ul` flex-wrap, gap `space-2`, margin-top `space-6`; each chip `surface-mist`, `line` border, `radius-pill`, padding 10px `space-4`, Montserrat 600 14px `ink`.
+`About.astro`, `#about`, right after the StatBand. Two columns, `3fr` / `2fr`, gap `space-8`, vertically centred; one column ≤ 860px (gap `space-7`).
+- Left: SectionHeading ("About us", split-weight title, lede), then the industries from `domain.industries` as chips: `ul` flex-wrap, gap `space-2`, margin-top `space-6`; each chip `surface-mist`, `line` border, `radius-pill`, padding 10px `space-4`, Montserrat 600 14px `ink`.
+- Right (under the chips ≤ 860px, max 720px wide): each industry's `picture` in chip order, as a 2×2 grid, gap `space-4` (`space-3` ≤ 640px). Each frame is 4:3, `line` border, `radius-md`, `overflow: hidden`; `<Picture>` AVIF/WebP at 240/480/720 widths (never above the source), `object-fit: cover`, lazy, `sizes="(max-width: 860px) min(calc(50vw - 22px), 352px), 212px"`. The grid is `aria-hidden` and each `alt=""`: the chips already name the industries.
+- Highlight: hovering a chip or a picture highlights both (`:has()`, one rule per industry by position): `violet-600` border, chip text `violet-600` (colour only, also under reduced motion), and with motion allowed the picture zooms to 1.04 over 0.5s. Browsers without `:has()` show no highlight.
 
 ### 7.17 Contact form
 A `surface` card (`radius-lg`, padding `space-6`; `space-5` × `space-4` on phones) inside the Contacts panel, so focus rings inside it switch back to `violet-600`. `<form action="mailto:team@hantii.com" method="post" enctype="text/plain" data-mail-form>` with `data-to`, `data-subject`, `data-reply-to`:
@@ -352,7 +357,7 @@ Behaviour is in §9. Without JS the browser validates the email and posts the fo
 All of it sits inside `prefers-reduced-motion: no-preference`; with reduced motion nothing moves and the count-up doesn't run.
 - Sections: `.section > .container` rises 26px and fades in over `entry 0%–40%` of a `view()` timeline, inside `@supports (animation-timeline: view())`. Browsers without scroll-driven animations show the content as is; nothing starts hidden.
 - Hero: the marker draws in once (background-size 0 → 100%, 0.9s after 0.3s); HeroFrame per §7.6; the mark per §7.15; stats per §9.
-- Hover: buttons lift 2px (arrow nudges 3px); `.card` lifts 3px with `shadow-float`; team photos zoom 4%; Domain rows and icons turn `violet-600` (colour only, also under reduced motion).
+- Hover: buttons lift 2px (arrow nudges 3px); `.card` lifts 3px with `shadow-float`; team photos zoom 4%; Domain rows and icons turn `violet-600` (colour only, also under reduced motion); an About chip and its picture highlight together and the picture zooms 4% (§7.16).
 
 ## 8. Content model (`src/data/site.ts`)
 
@@ -368,6 +373,7 @@ export interface Title { lead: string; strong: string }   // rendered as: lead <
 export interface Heading { eyebrow: string; title: Title; lede?: string }
 export interface Stat { value: string; label: string }
 export interface DomainRow { label: string; icon: IconName }
+export interface IndustryRow extends DomainRow { picture: ImageMetadata }  // from src/assets/industries/<slug>.jpg
 export interface Principle { title: string; body: string }
 export interface WhyItem { title: string; emphasis?: string; body: string; tone: "light" | "deep" }
 export interface TeamMember {
@@ -383,8 +389,8 @@ export const site = { url, name, legalName, meta: { title, description, ogImageA
 export const hero = { eyebrow, title: { first, second }, points: string[3], primary: Link, secondary: Link,
   pipeline: { label, columns: { role, status }, status, roles: string[3], caption } };
 export const stats: { heading; items: Stat[4] };      // exactly the approved four
-export const about: Heading;                           // chips reuse domain.industries
-export const domain: Heading & { industriesTitle; industries: DomainRow[4]; functionsTitle; functions: DomainRow[3] };
+export const about: Heading;                           // chips and pictures reuse domain.industries
+export const domain: Heading & { industriesTitle; industries: IndustryRow[4]; functionsTitle; functions: DomainRow[3] };
 export const approach: Heading & { principles: Principle[4] };
 export const why: Heading & { cta: Link; items: WhyItem[3] };
 export const team: Heading & { photoPending; members: TeamMember[]; card: { title: { before, strong, after }; body; cta: Link } };
@@ -542,6 +548,7 @@ A failed build leaves the previous version live. Rollback: Workers & Pages → h
 | --- | --- | --- |
 | Header/footer logo | `src/assets/brand/hantii-mark.png`, `hantii-wordmark.png` | Two `<Image>`s, WebP at 1x/2x of the rendered height (mark 40px, wordmark 23px), `loading="eager"` in the header, `lazy` in the footer |
 | Team portraits | `src/assets/team/*.jpg` (prepared as below) | `<Picture>` AVIF/WebP at 320/480/640 widths (never above the source), lazy, explicit width/height (no CLS) |
+| About industry pictures | `src/assets/industries/*.jpg` (prepared as below) | `<Picture>` AVIF/WebP at 240/480/720 widths (never above the source), lazy, explicit width/height (no CLS) |
 | Icons, OG image | brand PNGs | `public/`, generated once by `npm run icons` |
 
 Portrait preparation (done once per photo, outside the build; originals stay out of the repo):
@@ -551,6 +558,8 @@ Portrait preparation (done once per photo, outside the build; originals stay out
 3. Resize so the long edge is at most 1500px; never upscale. JPEG quality ~86, progressive.
 4. Strip all metadata (EXIF, GPS, maker notes). Re-saving through Pillow without `exif=` does this.
 5. Name it `<first>-<last>.jpg` in lowercase ASCII.
+
+Industry picture preparation (same rules, done once with sharp; originals stay out of the repo): crop to exactly 4:3 keeping the subject whole, resize to at most 960px wide (never upscale), sRGB progressive JPEG at quality ~86 with metadata stripped, named after the industry (`web3-crypto.jpg`). The iGaming original is only 510px wide, so its picture (508×381) is slightly soft on high-DPI tablets, where the stacked tiles reach 352px; a larger original would help.
 
 Fonts: one Google Fonts CSS2 request with `display=swap`, preconnected. The v1.1 hero copy is long enough that the swap moved the HeroFrame (CLS 0.14 in Lighthouse mobile), so `global.css` declares metric-matched fallback faces: `Geologica Fallback` (300, 400, 600–700), `Open Sans Fallback` (400, 600–700) and `Montserrat Fallback` (600–700), each `local("Arial")` or `local("Arial Bold")` with `size-adjust` and `ascent`/`descent`/`line-gap-override`. They sit second in each family stack (§4.2). Values were computed from the Google Fonts TTFs and macOS Arial: `size-adjust` = the font's frequency-weighted average advance width (a–z plus space, per em) ÷ Arial's; the overrides = hhea ascender/descender/lineGap ÷ (unitsPerEm × size-adjust). With them, CLS is 0–0.03. Recompute if a family or weight changes.
 
