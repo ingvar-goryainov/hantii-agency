@@ -14,6 +14,9 @@ type Props = Omit<HTMLAttributes<"a">, "type"> & {
   size?: "small";
   /** Trailing arrow that nudges right on hover. */
   arrow?: boolean;
+  /** Popover API invoker, for a <button> that opens or closes a popover. */
+  popovertarget?: string;
+  popovertargetaction?: "show" | "hide" | "toggle";
 };
 
 const { href, type = "button", variant = "primary", size, arrow = false, class: className, ...rest } = Astro.props;

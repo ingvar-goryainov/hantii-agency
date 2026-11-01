@@ -44,7 +44,7 @@ Before you call a change done, all of these must pass: `npm run check`, `npm tes
 | Client JS (menu link close, copy email, stat count-up, contact form handoff) | `src/scripts/site.ts`, the only script |
 | Redirects, security and cache headers | `worker/policy.ts` (values) and `worker/index.ts` (handler), tested in `worker/index.test.ts` |
 | Hosting, domains | `wrangler.jsonc` |
-| Team portraits | `src/assets/team/<first>-<last>.jpg`: 4:5, eye line at 41.5%, metadata stripped (`docs/design.md` §12) |
+| Team portraits | `src/assets/team/<first>-<last>.jpg` (`.png` for a cutout with a transparent background): 4:5, eye line at 41.5%, metadata stripped (`docs/design.md` §12) |
 | About industry pictures | `src/assets/industries/<industry>.jpg`: 4:3, ≤ 960px wide, metadata stripped (`docs/design.md` §12); set as each industry's `picture` in `src/data/site.ts` |
 
 ## Brand rules (hard constraints)
