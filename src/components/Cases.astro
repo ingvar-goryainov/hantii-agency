@@ -1,0 +1,160 @@
+---
+/**
+ * Cases (FR-21): three case cards with a result badge, three key facts and a "Read case"
+ * button. The full case opens in a Popover API reader, so opening, closing, Esc, light
+ * dismiss and focus return work without JavaScript and without leaving the page.
+ */
+import Button from "./Button.astro";
+import Icon from "./Icon.astro";
+import SectionHeading from "./SectionHeading.astro";
+import { cases } from "../data/site";
+---
+
+<section id="cases" class="section" aria-labelledby="cases-title">
+  <div class="container">
+    <SectionHeading heading={cases} id="cases-title" />
+    <ul class="grid">
+      {cases.items.map((c) => (
+        <li class="card">
+          <span class="hn-badge"><Icon name="check" size={14} />{c.badge}</span>
+          <h3 class="t-card-title">{c.title}</h3>
+          <ul class="facts">
+            {c.highlights.map((fact) => <li>{fact}</li>)}
+          </ul>
+          <Button variant="ghost" size="small" popovertarget={c.id} class="read">{cases.read}</Button>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  {cases.items.map((c) => (
+    <div id={c.id} class="reader" popover aria-labelledby={`${c.id}-title`}>
+      <div class="reader-head">
+        <span class="hn-badge"><Icon name="check" size={14} />{c.badge}</span>
+        <button
+          class="close"
+          type="button"
+          popovertarget={c.id}
+          popovertargetaction="hide"
+          aria-label={cases.close}
+          autofocus
+        >
+          <Icon name="x" size={22} />
+        </button>
+      </div>
+      <h3 id={`${c.id}-title`} class="t-card-title">{c.title}</h3>
+      {c.blocks.map((block) => (
+        <div class="block">
+          <h4 class="t-eyebrow">{block.title}</h4>
+          {block.body.map((part) =>
+            Array.isArray(part)
+              ? <ul class="t-body bullets">{part.map((item) => <li>{item}</li>)}</ul>
+              : <p class="t-body">{part}</p>
+          )}
+        </div>
+      ))}
+    </div>
+  ))}
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+  }
+  .card {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    align-content: start;
+    justify-items: start;
+    gap: var(--space-4);
+  }
+  .card h3 { color: var(--ink); }
+
+  .facts { width: 100%; align-self: start; }
+  .facts li {
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--line);
+    font: 600 16px/1.4 var(--font-display);
+    color: var(--ink-soft);
+  }
+  .card :global(.read) { margin-top: var(--space-2); }
+
+  /* Reader: a centred panel in the top layer; a bottom sheet on phones. */
+  .reader {
+    --reader-pad-top: var(--space-6);
+    width: min(760px, calc(100% - 2 * var(--gutter)));
+    max-height: calc(100dvh - 2 * var(--space-6));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    margin: auto;
+    padding: var(--reader-pad-top) var(--space-7) var(--space-7);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-float);
+  }
+  .reader::backdrop { background: color-mix(in srgb, var(--surface-deep) 55%, transparent); }
+  :global(html:has(.reader:popover-open)) { overflow: hidden; }
+
+  /* The badge and close button stay in reach while the case scrolls. */
+  .reader-head {
+    position: sticky;
+    top: calc(-1 * var(--reader-pad-top));
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: calc(-1 * var(--reader-pad-top)) 0 var(--space-4);
+    padding: var(--reader-pad-top) 0 var(--space-3);
+    background: var(--surface);
+  }
+  .reader h3 { margin-bottom: var(--space-2); }
+  .close {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .close:hover { border-color: var(--violet-600); }
+
+  .block {
+    display: grid;
+    gap: var(--space-3);
+    padding-top: var(--space-5);
+    margin-top: var(--space-5);
+    border-top: 1px solid var(--line);
+  }
+  .block h4 { color: var(--aqua-700); }
+  .block .t-body { color: var(--ink-muted); }
+  .bullets { display: grid; gap: var(--space-2); padding-left: 1.25em; list-style: disc; }
+  .bullets li::marker { color: var(--violet-600); }
+
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: minmax(0, 1fr); }
+    .card { grid-template-rows: none; }
+  }
+  @media (max-width: 640px) {
+    .reader {
+      width: 100%;
+      max-width: none;
+      max-height: calc(100dvh - var(--space-7));
+      margin: auto 0 0;
+      --reader-pad-top: var(--space-5);
+      padding: var(--reader-pad-top) var(--gutter) var(--space-7);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+  }
+</style>

@@ -56,7 +56,7 @@ Section IDs in brackets are the page anchors.
 
 | ID | Requirement |
 | --- | --- |
-| FR-01 | **Header** — sticky at the top on all widths. Shows the Hantii mark and wordmark as two images (40px and 23px tall; 34px and 19.5px on phones) linking to the top of the home page, navigation to About, Domain, Approach, Why us, Team, Contacts, and a small primary CONTACT US button to `#contacts`. |
+| FR-01 | **Header** — sticky at the top on all widths. Shows the Hantii mark and wordmark as two images (40px and 23px tall; 34px and 19.5px on phones) linking to the top of the home page, navigation to About, Domain, Cases, Approach, Why us, Advisory, Team, Contacts, and a small primary CONTACT US button to `#contacts`. |
 | FR-02 | **Mobile menu** — below the header breakpoint the navigation collapses behind a menu button. The button exposes its state (`aria-expanded`), the panel closes on Esc, on outside click and when a link is chosen, and focus returns to the button. Without JavaScript the navigation stays reachable. |
 | FR-03 | **Hero** — eyebrow, h1 "We run the hire, you run the business." with the first clause on its own line and the second on a `violet-100` marker, three points with gem bullets, primary HIRE TOP TALENT with an arrow (to `#contacts`) and ghost OUR APPROACH (to `#approach`). The headline and points sit above the fold at 1366×768 and 390×844. The HeroFrame sits in the right column and stacks under the copy on narrow screens. |
 | FR-04 | **HeroFrame** — the blush blob behind a thin browser window, geometry copied from the design system. Inside the window, a snapshot of the talent pipeline: a "Talent pipeline" label, a Role / Status header and three role titles, each with an "Open to work" pill. Role titles only, never candidate names; on phones the pill stacks under the role. The caption sits inside the window as the table's footer. The blob drifts slowly and the rows slide in once; motion stops under `prefers-reduced-motion`. The drawing is hidden from assistive tech; the list and caption are not. |
@@ -66,7 +66,7 @@ Section IDs in brackets are the page anchors.
 | FR-08 | **Why choose us** [`#why`] — an intro column with a START A SEARCH button (to `#contacts`) that stays in view (sticky) while three items scroll past on desktop; the third item is a dark panel carrying "AI can't read people. We can." Stacks to one column on narrow screens. |
 | FR-09 | **Core team** [`#team`] — heading, a card per founder (4:5 portrait with name, role and LinkedIn button over it), then the one warm card: "A **boutique** team…", a line of body copy and TALK TO US (to `#contacts`). A member without a photo shows the placeholder state (gem on a mist-to-blush ground, "Photo coming soon"); a member without a LinkedIn URL shows no button. |
 | FR-10 | **Contacts** [`#contacts`] — dark panel with heading, lede, three rows (email as selectable text with a Copy button, LinkedIn, Instagram) and the contact form (FR-20). Copy puts `team@hantii.com` on the clipboard and announces "Copied" to screen readers; if copying is unavailable the button is hidden and the email stays selectable. |
-| FR-11 | **Footer** — mist ground; logo and a one-line description; Agency links (About us, Our domain, Our approach, Core team, Team); Contacts (email, LinkedIn, Instagram); "© {year} Hantii Agency. All rights reserved." and "Recruiting for FinTech · Web3 · iGaming · AI". |
+| FR-11 | **Footer** — mist ground; logo and a one-line description; Agency links (About us, Our domain, Cases, Our approach, Hiring Advisory, Core team, Team); Contacts (email, LinkedIn, Instagram); "© {year} Hantii Agency. All rights reserved." and "Recruiting for FinTech · Web3 · iGaming · AI". |
 | FR-12 | **404** — branded page for any unknown path, served with HTTP 404, with a way back to the homepage. |
 | FR-13 | **Metadata** — unique title and meta description, canonical URL `https://hantii.com/`, Open Graph and Twitter card tags with a 1200×630 share image, favicons (32, 48, SVG or PNG mark) and Apple touch icon, `theme-color`. |
 | FR-14 | **Structured data** — JSON-LD `EmploymentAgency` with name, URL, logo, email and `sameAs` (LinkedIn, Instagram). |
@@ -77,6 +77,8 @@ Section IDs in brackets are the page anchors.
 | FR-19 | **Team** [`#people`] — heading and a card per team member (§5.2): 4:5 photo with the name and role under it, so the photo stays whole, and a LinkedIn button beside them when the member has a profile. The placeholder state of FR-09 applies. Linked from the footer, not the header. |
 | FR-20 | **Contact form** — Email (required: `danger` asterisk and a "* Required" note) and Message (optional), then SEND MESSAGE. An empty or invalid email shows "Enter an email address, like name@company.com." and focuses the field. A valid submit opens the visitor's email app with a message to team@hantii.com (subject, their message, their email as reply-to) and shows a status line that never claims the message was sent. Without JavaScript the form posts to its `mailto:` action and the browser validates the email. |
 | FR-21 | **Motion** — sections rise 26px and fade in as they scroll into view (scroll-driven CSS, so content is never hidden where it can't animate); the hero marker draws in; the mark turns every 7s; hover lifts buttons 2px and cards 3px, zooms photos 4%, turns Domain rows `violet-600`, and highlights an About chip with its picture (`violet-600` border, picture zooms 4%). Everything stops under `prefers-reduced-motion`. |
+| FR-22 | **Cases** [`#cases`] — between Our domain and Our approach: heading and three case cards (§5.2), three across on desktop and one column ≤ 960px. Each card shows the result badge, the case title, three key facts and a READ CASE button. The button opens the full case on the same page (no reload, works on phones) in six blocks: Client → The brief → The challenge → The process → The outcome → What we learned / The takeaway, with lists as bulleted lists and nothing clipped (the reader scrolls). It closes with its close button, Esc or a tap outside; focus moves into it on open and back to the button on close. |
+| FR-23 | **Hiring Advisory** [`#advisory`] — right after Why choose us, on the mist ground: heading and four service cards, each with a title, a headline and a short description. Four across on desktop, 2×2 on tablets (≤ 1100px), one column on phones (≤ 640px). The first three are numbered 01–03 / 03 as consecutive steps (diagnosis → plan → implementation); the fourth is optional, marked with an "Add-on" badge and a dashed border. Under the cards, TALK TO US (to `#contacts`) is the section's one primary button. |
 
 ## 5. Content requirements
 
@@ -109,7 +111,7 @@ Team (supplied by the owner 2026-10-23), in this order:
 
 | Name | Role | LinkedIn | Portrait |
 | --- | --- | --- | --- |
-| Anastasiia Ivanova | Talent Sourcer | https://www.linkedin.com/in/anastasiia-ivanova-5bb98242b/ | `src/assets/team/anastasiia-ivanova.jpg` |
+| Anastasiia Ivanova | Talent Sourcer | https://www.linkedin.com/in/anastasiia-ivanova-5bb98242b/ | `src/assets/team/anastasiia-ivanova.png` (background removed on the owner's request, 2026-11-01) |
 | Yuliia Pavelko | Recruiter | https://www.linkedin.com/in/yuliia-pavelko-45b643387/ | `src/assets/team/yuliia-pavelko.jpg` |
 | Inna Belova | Recruiter | https://www.linkedin.com/in/inna-belova-089355149/ | `src/assets/team/inna-belova.jpg` |
 | TeamMate (the agency's cat) | Chief Napping Officer | — | `src/assets/team/teammate.jpg`, alt "Our ginger cat wearing a collar and tie" |
@@ -117,6 +119,14 @@ Team (supplied by the owner 2026-10-23), in this order:
 "From the first key hires to the first 100+ employees" (About, Core team) is approved copy describing a client's growth stages, not a figure about Hantii.
 
 Industry pictures (supplied by the owner 2026-10-24, cleared for commercial use on hantii.com), one per industry, in chip order: `src/assets/industries/web3-crypto.jpg`, `fintech.jpg`, `igaming.jpg`, `ai-deep-tech.jpg`. They illustrate the industries, not Hantii's clients; the crypto symbols in the Web3 picture are not client logos.
+
+Cases (supplied by the owner 2026-11-01): three anonymised searches, in this order, with their full texts in `src/data/site.ts` word for word. Their figures (profiles reviewed, screening calls, finalists, weeks to offer) describe that one search; they are not statistics about Hantii and never appear outside their case.
+
+| Case | Badge | Key facts |
+| --- | --- | --- |
+| Commercial Partnerships Lead / Program Lead — two key hires for a new business line | Both offers accepted | 400+ profiles · 3 and 4 weeks · 3 client interviews per finalist |
+| Senior Backend Engineer for a payments platform | Offer accepted in 3 weeks | 460 profiles · 9 screenings · 2 finalists |
+| Infrastructure engineer for international payments | Offer accepted in 4 weeks | 340 profiles · 12 screenings · 3 finalists |
 
 Never add statistics, client names or logos, testimonials, awards, team names, roles or photos that the owner has not supplied.
 
@@ -154,6 +164,11 @@ The source of truth for wording is `src/data/site.ts`; this deck records the app
 - Title: We work where **the market is moving.**
 - Lists: Industries · Functions (FR-06)
 
+**Cases** (supplied by the owner 2026-11-01; the title is a draft awaiting sign-off, O7)
+- Eyebrow: Cases
+- Title: Recent searches, from brief **to accepted offer.**
+- Cards: the three cases of §5.2, each with its badge, three key facts and READ CASE; the reader's close button is labelled "Close" for screen readers.
+
 **Our approach**
 - Eyebrow: Our approach
 - Title: Four principles behind **every search.**
@@ -170,6 +185,15 @@ The source of truth for wording is `src/data/site.ts`; this deck records the app
 - We know recruiting from the inside. — We've seen it all, from the days when recruiters were dismissed as "CV sorters" to today, when everyone says AI will replace us. That journey taught us exactly where a recruiter's real value lies, and why it isn't going anywhere.
 - We evolve with the market. — Yes, the industry is changing, and so are we. We see that shift as an opportunity. Automation handles volume. We handle quality, and everything AI can't do.
 - (dark) AI can't read people. **We can.** — No algorithm can tell you how someone communicates, or whether they truly have the expertise their CV claims. Candidates now use AI to write polished CVs that sail through AI screening. That's why we focus where it matters: spotting patterns, holding real conversations, and verifying experience face to face.
+
+**Hiring Advisory** (supplied by the owner 2026-11-01; the title is a draft awaiting sign-off, O7)
+- Eyebrow: Hiring Advisory
+- Title: Fix how you hire, **not just who.**
+- Hiring Audit — What's slowing your hiring down? — We dig into your hiring process, find what's getting in the way, and recommend what to fix first.
+- Hiring Audit & Action Plan — Know what to fix. And how. — Get a clear diagnosis and a practical action plan — with priorities, owners, and milestones.
+- Hands-on Implementation — Let's make it work. — We work alongside your team to put changes into practice, test them on real roles, and fine-tune what needs adjusting.
+- (Add-on) Ongoing Hiring Support — Keep your hiring on track. — Ongoing support to help your team set priorities, tackle hiring challenges, and keep things moving.
+- Button: TALK TO US →
 
 **Core team**
 - Eyebrow: Core team
@@ -194,7 +218,7 @@ The source of truth for wording is `src/data/site.ts`; this deck records the app
 
 **Footer**
 - Hantii Agency is a boutique recruiting agency for FinTech, MarTech, and digital-driven businesses.
-- Agency: About us · Our domain · Our approach · Core team · Team
+- Agency: About us · Our domain · Cases · Our approach · Hiring Advisory · Core team · Team
 - Contacts: team@hantii.com · LinkedIn · Instagram
 - © {year} Hantii Agency. All rights reserved. · Recruiting for FinTech · Web3 · iGaming · AI
 
@@ -239,9 +263,10 @@ The release is accepted when all of the following hold on the production URL:
 
 | # | Item | Needed for | Status |
 | --- | --- | --- | --- |
-| O1 | Team: names, roles, LinkedIn URLs, portrait photos (4:5, at least 800×1000, head-and-shoulders) | FR-09, FR-19, public launch | Founders done 2026-09-27, team done 2026-10-23 (§5.2). Below the 800×1000 target after cropping: Alona 640×800, Yuliia 480×600, Anastasiia and Inna 360×450. Fine on the ~270px Team cards; soft on high-DPI screens at tablet widths, where the cards are wider. Larger originals would help. |
+| O1 | Team: names, roles, LinkedIn URLs, portrait photos (4:5, at least 800×1000, head-and-shoulders) | FR-09, FR-19, public launch | Founders done 2026-09-27, team done 2026-10-23 (§5.2). Below the 800×1000 target after cropping: Alona 640×800, Yuliia 480×600, Anastasiia 384×480 (cut out, 2026-11-01), Inna 360×450. Fine on the ~270px Team cards; soft on high-DPI screens at tablet widths, where the cards are wider. Larger originals would help. |
 | O2 | Approve or edit the draft copy in §5.4 | Launch | Open |
 | O3 | Cloudflare: connect the GitHub repo in Workers & Pages; confirm `hantii.com` is in the same account and apex/www have no conflicting DNS records | FR-16, NFR-11 | Open |
 | O4 | Google Fonts are loaded from Google as the design system specifies. Self-hosting them would remove the only third-party request, which matters for GDPR. With inlined CSS, Lighthouse mobile performance is already 100 using Google Fonts, so this is now a privacy decision rather than a speed one. Keep or self-host? | NFR-08 | Open — default: Google Fonts |
 | O5 | Vector (SVG) versions of the logo for sharper rendering and a smaller favicon | FR-01, FR-13 | Nice to have |
 | O6 | Privacy/legal notice page — not required while the site sets no cookies and collects no data. The contact form sends nothing to the site: it opens the visitor's own email app. Revisit if analytics or a form backend are added | Legal | Deferred |
+| O7 | Approve or edit the drafted titles of the two new sections: Cases "Recent searches, from brief **to accepted offer.**" and Hiring Advisory "Fix how you hire, **not just who.**" (the brief named the sections only) | FR-22, FR-23 | Open |

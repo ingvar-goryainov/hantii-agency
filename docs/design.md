@@ -53,7 +53,7 @@ src/
   assets/brand/hantii-mark.png   split diamond (770×747, transparent)
   assets/brand/hantii-wordmark.png  wordmark (1536×431, transparent)
   assets/team/                   founders vlada-havriushova.jpg (1200×1500), alona-zolotoverkha.jpg (640×800);
-                                 team anastasiia-ivanova.jpg, inna-belova.jpg (360×450), yuliia-pavelko.jpg (480×600),
+                                 team anastasiia-ivanova.png (384×480, cut out), inna-belova.jpg (360×450), yuliia-pavelko.jpg (480×600),
                                  teammate.jpg (1120×1400): all 4:5, prepared per §12
   assets/industries/             About pictures web3-crypto.jpg, ai-deep-tech.jpg (960×720), fintech.jpg (752×564),
                                  igaming.jpg (508×381): all 4:3, prepared per §12
@@ -171,7 +171,7 @@ The 48px phone `stat` and 22px phone `list-large` are site decisions (the design
 - **Section rhythm** `.section`: `padding-top: var(--section-gap)` (72px ≤ 640px). `.section--mist` (Approach) and `.section--end` (Contacts, 404) also pad the bottom. Heading block to content: `--space-7`.
 - **Grounds**, top to bottom: header `surface` · hero `surface` (blob `surface-blush`) · StatBand `surface-deep` panel · About `surface` (chips `surface-mist`, industry pictures) · Domain `surface` · Approach `surface-mist` · Why us `surface` (third item `surface-deep`) · Core team `surface` (warm card `surface-blush`) · Team `surface` · Contacts `surface-deep` panel with a `surface` form card · footer `surface-mist`.
 - **Sticky header** height 72px (64px ≤ 960px). `html { scroll-padding-top: calc(header + var(--space-4)) }` so anchors land below it (FR-17).
-- **Z-index**: header 50; the menu popover sits in the top layer.
+- **Z-index**: header 50; the menu and case reader popovers sit in the top layer.
 
 | Breakpoint (max-width) | Change |
 | --- | --- |
@@ -192,14 +192,16 @@ The 48px phone `stat` and 22px phone `list-large` are site decisions (the design
 | 2 | `StatBand` | — | — | FR-05 |
 | 3 | `About` | `#about` | About | FR-18 |
 | 4 | `Domain` | `#domain` | Domain | FR-06 |
-| 5 | `Approach` | `#approach` | Approach | FR-07 |
-| 6 | `WhyUs` | `#why` | Why us | FR-08 |
-| 7 | `Team` + `TeamCard` | `#team` | Team | FR-09 |
-| 8 | `People` + `TeamCard` | `#people` | (footer only) | FR-19 |
-| 9 | `Contacts` | `#contacts` | Contacts | FR-10, FR-20 |
+| 5 | `Cases` | `#cases` | Cases | FR-22 |
+| 6 | `Approach` | `#approach` | Approach | FR-07 |
+| 7 | `WhyUs` | `#why` | Why us | FR-08 |
+| 8 | `Advisory` | `#advisory` | Advisory | FR-23 |
+| 9 | `Team` + `TeamCard` | `#team` | Team | FR-09 |
+| 10 | `People` + `TeamCard` | `#people` | (footer only) | FR-19 |
+| 11 | `Contacts` | `#contacts` | Contacts | FR-10, FR-20 |
 | — | `Footer` (in `Base.astro`) | — | — | FR-11 |
 
-Landmarks: `<header>`, `<nav aria-label="Main">`, `<main id="main">` (skip-link target), one `<section aria-labelledby>` per block, `<footer>`. Exactly one `h1` (hero); every section title is an `h2`; card titles and the form title are `h3`; the footer's column titles are `h2` (they follow `main`, so levels never skip). The header and footer logos link to `/#top`.
+Landmarks: `<header>`, `<nav aria-label="Main">`, `<main id="main">` (skip-link target), one `<section aria-labelledby>` per block, `<footer>`. Exactly one `h1` (hero); every section title is an `h2`; card titles, case reader titles and the form title are `h3`, the case reader's block titles `h4`; the footer's column titles are `h2` (they follow `main`, so levels never skip). The header and footer logos link to `/#top`.
 
 ## 7. Components
 
@@ -242,7 +244,7 @@ Line icons, `stroke: currentColor`, `stroke-width: 1.6`, `fill: none`, 24×24 vi
 .hn-btn:hover .hn-btn-arrow { transform:translateX(3px); }
 ```
 
-Props: `href?` (renders `<a>`; without it a `<button>` with `type?: "button" | "submit"`), `variant: "primary" | "ghost"`, `size?: "small"`, `arrow?: boolean` (trailing `arrow-right` icon, aria-hidden). Rules: one primary per section; ghost never on `surface-deep`; labels are uppercase verbs written in sentence case in content and uppercased by CSS. `.hn-btn--small` minimum hit area is kept at 44px by the header row height.
+Props: `href?` (renders `<a>`; without it a `<button>` with `type?: "button" | "submit"`), `variant: "primary" | "ghost"`, `size?: "small"`, `arrow?: boolean` (trailing `arrow-right` icon, aria-hidden), `popovertarget?` / `popovertargetaction?` (a `<button>` that opens or closes a popover, e.g. READ CASE). Rules: one primary per section; ghost never on `surface-deep`; labels are uppercase verbs written in sentence case in content and uppercased by CSS. `.hn-btn--small` minimum hit area is kept at 44px by the header row height.
 
 ### 7.4 SectionHeading
 Eyebrow (Gem + label) → `h2.t-section-title` with one `<strong>` phrase at the end → optional lede. Classes `hn-heading` (grid, gap `space-4`, max-width 720px), `hn-eyebrow` (`aqua-700` on light, `emerald-300` on `surface-deep` via a `tone="deep"` prop). Props: `heading` (`{ eyebrow, title: { lead, strong }, lede? }`), `id` (for `aria-labelledby`), `level?: 1 | 2` (the 404 page uses 1). On `surface-deep` the colours switch via the `.on-deep` ancestor class, not a prop. The space between `lead` and `strong` is written as `{" "}`: Astro's HTML compression otherwise drops it. Hyphenated compounds in the title ("digital-driven") are wrapped in `.nowrap` so they never break at the hyphen.
@@ -330,7 +332,7 @@ Container-width panel on `surface-deep` with the two corner glows, `radius-lg`, 
 The LinkedIn and Instagram links stretch over their whole row (`::after` overlay) so the target is the row's full ~78px height; their focus ring moves to the row via `.row:has(a:focus-visible)`. On phones the text keeps at least 180px (`flex: 1 1 180px`), so the Copy button wraps under the email instead of squeezing it. Right: the contact form card (§7.17). The logo is never placed in this panel (dark ground).
 
 ### 7.13 Footer
-`surface-mist`, padding-block `space-8` `space-6`. Top grid, 2fr/1fr/1fr (2 columns ≤ 860px with the first spanning, 1 column ≤ 400px), `line` hairline below: `Logo` linking to `/#top` and the one-line blurb (`t-caption ink-muted`) · `nav` "Agency" (About us, Our domain, Our approach, Core team, Team) · "Contacts" (team@hantii.com → `/#contacts`, LinkedIn, Instagram). Column titles are `h2.t-eyebrow aqua-700`; links are 15px `ink`, 44px tall, `violet-600` with an underline on hover. Bottom row (`t-caption ink-muted`, space-between, wraps): "© {year} Hantii Agency. All rights reserved." (year at build time) and "Recruiting for FinTech · Web3 · iGaming · AI".
+`surface-mist`, padding-block `space-8` `space-6`. Top grid, 2fr/1fr/1fr (2 columns ≤ 860px with the first spanning, 1 column ≤ 400px), `line` hairline below: `Logo` linking to `/#top` and the one-line blurb (`t-caption ink-muted`) · `nav` "Agency" (About us, Our domain, Cases, Our approach, Hiring Advisory, Core team, Team) · "Contacts" (team@hantii.com → `/#contacts`, LinkedIn, Instagram). Column titles are `h2.t-eyebrow aqua-700`; links are 15px `ink`, 44px tall, `violet-600` with an underline on hover. Bottom row (`t-caption ink-muted`, space-between, wraps): "© {year} Hantii Agency. All rights reserved." (year at build time) and "Recruiting for FinTech · Web3 · iGaming · AI".
 
 ### 7.14 Base layout
 `<html lang="en">`; `<head>`: charset, viewport, title, description, canonical, `theme-color #ffffff`, OG/Twitter tags (§11), icons, preconnect to `fonts.googleapis.com` and `fonts.gstatic.com` (crossorigin), Google Fonts stylesheet, JSON-LD, `<noscript><style>` for the no-JS rules (§9). `<body>`: skip link "Skip to content" (visible on focus) → Header → `<main id="main">` slot → Footer. Global focus style: `:focus-visible { outline: 3px solid var(--violet-600); outline-offset: 3px }`, `violet-300` inside `.on-deep`.
@@ -357,7 +359,17 @@ Behaviour is in §9. Without JS the browser validates the email and posts the fo
 All of it sits inside `prefers-reduced-motion: no-preference`; with reduced motion nothing moves and the count-up doesn't run.
 - Sections: `.section > .container` rises 26px and fades in over `entry 0%–40%` of a `view()` timeline, inside `@supports (animation-timeline: view())`. Browsers without scroll-driven animations show the content as is; nothing starts hidden.
 - Hero: the marker draws in once (background-size 0 → 100%, 0.9s after 0.3s); HeroFrame per §7.6; the mark per §7.15; stats per §9.
-- Hover: buttons lift 2px (arrow nudges 3px); `.card` lifts 3px with `shadow-float`; team photos zoom 4%; Domain rows and icons turn `violet-600` (colour only, also under reduced motion); an About chip and its picture highlight together and the picture zooms 4% (§7.16).
+- Hover: buttons lift 2px (arrow nudges 3px); `.card` lifts 3px with `shadow-float` (Cases and Advisory cards too); team photos zoom 4%; Domain rows and icons turn `violet-600` (colour only, also under reduced motion); an About chip and its picture highlight together and the picture zooms 4% (§7.16).
+
+### 7.19 Cases
+`Cases.astro`, `#cases`, between Domain and Approach, on `surface`. SectionHeading, then a `<ul>` grid of three `.card`s (3 columns, 1 ≤ 960px, gap `space-5`). Each card is a grid with rows `auto auto 1fr auto`, so the buttons line up: the result badge (`.hn-badge` with a 14px `check` icon) → `h3.t-card-title` → the three key facts as a `<ul>`, each Geologica 600 16px `ink-soft` with a `line` hairline above → READ CASE (ghost small: it repeats three times and the section has no primary).
+
+Reader: one `<div popover id="case-…" aria-labelledby>` per case, opened by READ CASE (`popovertarget`), so opening and closing need no JavaScript and the page never reloads. The Popover API gives Esc, light dismiss, top-layer stacking and focus return; the close button (`popovertargetaction="hide"`, 44×44, `x` icon, `aria-label="Close"`) has `autofocus`, so focus moves into the reader on open. Panel: `surface`, `line` border, `radius-lg`, `shadow-float`, centred, `min(760px, 100% − 2 × gutter)` wide, at most `100dvh − 2 × space-6` tall with `overflow-y: auto` (nothing is clipped; it scrolls). Backdrop: `surface-deep` at 55%. While a reader is open, `html:has(.reader:popover-open)` hides the page's overflow so the page behind doesn't scroll. Content: a sticky head row (badge and close button, `surface` ground, so the close button stays in reach) → `h3` title → six blocks, each with a `line` hairline above, an `h4.t-eyebrow aqua-700` title and paragraphs or a bulleted list (`t-body ink-muted`, `violet-600` markers). ≤ 640px the reader becomes a bottom sheet: full width, top corners rounded, at most `100dvh − space-7` tall.
+
+### 7.20 Advisory
+`Advisory.astro`, `#advisory`, right after WhyUs, on `surface-mist`. SectionHeading, then a `<ul>` grid of four `.card`s (4 columns, 2 ≤ 1100px, 1 ≤ 640px, gap `space-5`): a marker → `h3.t-card-title` → the headline (Open Sans 600 16px `ink`) → the description (`t-body ink-muted`). The marker on the three consecutive services is the step "01 / 03" … "03 / 03" (`t-eyebrow aqua-700`); the add-on service shows `.hn-badge--outline` "Add-on" instead, and its card has a dashed `line-strong` border, so it reads as optional and outside the sequence. Under the grid, `margin-top: space-7`, TALK TO US (primary with arrow, to `#contacts`): the section's one primary button.
+
+`.hn-badge` (`global.css`): inline-flex, padding 7px 12px, `radius-sm`, Montserrat 700 12px uppercase with .06em tracking, `emerald-100` ground and `emerald-800` text. `.hn-badge--outline`: transparent ground, `line-strong` border, `ink-muted` text.
 
 ## 8. Content model (`src/data/site.ts`)
 
@@ -376,29 +388,34 @@ export interface DomainRow { label: string; icon: IconName }
 export interface IndustryRow extends DomainRow { picture: ImageMetadata }  // from src/assets/industries/<slug>.jpg
 export interface Principle { title: string; body: string }
 export interface WhyItem { title: string; emphasis?: string; body: string; tone: "light" | "deep" }
+export interface CaseBlock { title: string; body: (string | string[])[] }   // string = paragraph, string[] = bulleted list
+export interface CaseStudy { id: string; title: string; badge: string; highlights: string[]; blocks: CaseBlock[] }  // id = reader popover id
+export interface Service { title: string; headline: string; body: string; addOn?: boolean }
 export interface TeamMember {
   name: string; role: string;
-  photo: ImageMetadata | null;       // import from src/assets/team/<slug>.jpg
+  photo: ImageMetadata | null;       // import from src/assets/team/<slug>.jpg (or .png for a cutout)
   alt?: string;                      // when "Portrait of <name>" doesn't fit
   linkedin: string | null;
 }
 
 // Each block is its own export; the shape, in short:
 export const contacts = { email, linkedin, linkedinLabel, instagram, instagramLabel };
-export const site = { url, name, legalName, meta: { title, description, ogImageAlt }, nav: Link[6], headerCta: Link };
+export const site = { url, name, legalName, meta: { title, description, ogImageAlt }, nav: Link[8], headerCta: Link };
 export const hero = { eyebrow, title: { first, second }, points: string[3], primary: Link, secondary: Link,
   pipeline: { label, columns: { role, status }, status, roles: string[3], caption } };
 export const stats: { heading; items: Stat[4] };      // exactly the approved four
 export const about: Heading;                           // chips and pictures reuse domain.industries
 export const domain: Heading & { industriesTitle; industries: IndustryRow[4]; functionsTitle; functions: DomainRow[3] };
+export const cases: Heading & { read; close; items: CaseStudy[3] };   // texts word for word from the owner (requirements §5.2)
 export const approach: Heading & { principles: Principle[4] };
 export const why: Heading & { cta: Link; items: WhyItem[3] };
+export const advisory: Heading & { addOn; cta: Link; services: Service[4] };
 export const team: Heading & { photoPending; members: TeamMember[]; card: { title: { before, strong, after }; body; cta: Link } };
 export const people: Heading & { members: TeamMember[] };
 export const contact: Heading & { rows; copy: { idle, done, fallback };
   form: { title, lede, email, emailError, message, required, submit, subject, replyTo, handoff } };
 export const notFound: Heading & { cta: Link };
-export const footer = { blurb, agencyTitle, agency: Link[5], contactsTitle, emailHref, copyright(year), tagline };
+export const footer = { blurb, agencyTitle, agency: Link[7], contactsTitle, emailHref, copyright(year), tagline };
 ```
 
 Copy values come from requirements §5.4. The founders, in order (the Team section's `people.members` follow the same shape; TeamMate has no LinkedIn URL):
@@ -563,6 +580,8 @@ Industry picture preparation (same rules, done once with sharp; originals stay o
 
 Fonts: one Google Fonts CSS2 request with `display=swap`, preconnected. The v1.1 hero copy is long enough that the swap moved the HeroFrame (CLS 0.14 in Lighthouse mobile), so `global.css` declares metric-matched fallback faces: `Geologica Fallback` (300, 400, 600–700), `Open Sans Fallback` (400, 600–700) and `Montserrat Fallback` (600–700), each `local("Arial")` or `local("Arial Bold")` with `size-adjust` and `ascent`/`descent`/`line-gap-override`. They sit second in each family stack (§4.2). Values were computed from the Google Fonts TTFs and macOS Arial: `size-adjust` = the font's frequency-weighted average advance width (a–z plus space, per em) ÷ Arial's; the overrides = hhea ascender/descender/lineGap ÷ (unitsPerEm × size-adjust). With them, CLS is 0–0.03. Recompute if a family or weight changes.
 
+Cutout portrait (Anastasiia, at the owner's request 2026-11-01): the background was removed from the 1024×1024 original with macOS Vision (`VNGenerateForegroundInstanceMaskRequest`, via a one-off Swift script). Edge pixels that are partly transparent took the colour of the nearby opaque hair, so the bright window behind her doesn't leave a light fringe on dark grounds. The result was cropped with sharp to 384×480 by the rules above (eye line 41.5%, about 31% brow-to-chin) and saved as an RGBA PNG without metadata. In the card, the transparent area shows the frame's `surface-mist` ground; `<Picture>` keeps the alpha in AVIF/WebP.
+
 Portrait sizing note: faces in the Team cards sit at the founders' eye line but not exactly at their scale. Yuliia's selfie is already as wide as the source allows, and Anastasiia's and Inna's were cropped to about 31% brow-to-chin to keep enough pixels.
 
 ## 13. Accessibility checklist
@@ -596,5 +615,5 @@ Portrait sizing note: faces in the Team cards sit at the founders' eye line but 
 | A3 | Raster logos | The design system only ships PNGs; they are resized to WebP. SVG masters would be sharper and smaller (requirements O5). |
 | A4 | Google Fonts | Specified by the design system; the only third-party request (requirements O4). Self-hosting is a drop-in change: download the WOFF2 files to `public/fonts/`, add `@font-face`, remove the link and the two CSP origins. |
 | A5 | Astro script inlining vs strict CSP | Verified after every build (§9); fallback documented. |
-| A6 | Team portraits of uneven quality | Vlada's source is 3024×4032; Alona's is 800×800 (640×800 after cropping). Team sources were 1024×1024, 706×1040 and 640×640 (Anastasiia and Inna 360×450, Yuliia 480×600 after cropping): fine on the ~272px desktop Team cards, soft on 2× screens at tablet widths. Swap in larger originals when available; no code change needed (requirements O1). |
+| A6 | Team portraits of uneven quality | Vlada's source is 3024×4032; Alona's is 800×800 (640×800 after cropping). Team sources were 1024×1024, 706×1040 and 640×640 (Anastasiia 384×480 cut out, Inna 360×450, Yuliia 480×600 after cropping): fine on the ~272px desktop Team cards, soft on 2× screens at tablet widths. Swap in larger originals when available; no code change needed (requirements O1). |
 | A7 | Mail-app handoff instead of a form backend | Visitors without a configured mail app get no email client; the handoff line, the visible email and Copy remain. A Worker endpoint (e.g. Email Routing) would need spam protection, rate limits and a privacy notice (requirements O6). |
